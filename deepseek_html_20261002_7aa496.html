@@ -1,0 +1,3458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Data Dapodik 2027 - Kecamatan Sampang</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            /* Palet warna Dapodik */
+            --dapo-blue: #1a5fb4;
+            --dapo-blue-dark: #0d3b7a;
+            --dapo-blue-light: #3584e4;
+            --dapo-teal: #00a9a5;
+            --dapo-teal-dark: #007a77;
+            --dapo-green: #2ec27e;
+            --dapo-green-dark: #1a8f5a;
+            --dapo-yellow: #f5c211;
+            --dapo-orange: #ff7800;
+            --dapo-red: #e01b24;
+            --dapo-purple: #813d9c;
+            --dapo-bg: #eef4fb;
+            --dapo-bg-alt: #dbe9f7;
+            --dapo-card: #ffffff;
+            --dapo-border: #c8d9ed;
+            --dapo-text: #1c2b3a;
+            --dapo-text-muted: #5c7080;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dapo-bg);
+            color: var(--dapo-text);
+            overflow-x: hidden;
+        }
+
+        /* ============ PUBLIC DASHBOARD ============ */
+        .public-page {
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--dapo-bg) 0%, var(--dapo-bg-alt) 100%);
+        }
+
+        .public-header {
+            background: linear-gradient(135deg, var(--dapo-blue-dark) 0%, var(--dapo-blue) 45%, var(--dapo-teal) 100%);
+            color: white;
+            padding: 22px 20px;
+            box-shadow: 0 6px 24px rgba(13, 59, 122, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .public-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(245, 194, 17, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .public-header::after {
+            content: '';
+            position: absolute;
+            bottom: -60%;
+            left: 5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(0, 169, 165, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .public-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .public-header-left h1 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .public-header-left p {
+            font-size: 0.85rem;
+            opacity: 0.95;
+        }
+
+        .public-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .public-badge {
+            background: rgba(255,255,255,0.22);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.35);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .public-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--dapo-yellow);
+            border-radius: 50%;
+            animation: pulseDot 2s infinite;
+            box-shadow: 0 0 0 0 rgba(245, 194, 17, 0.7);
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 194, 17, 0.7); }
+            50% { opacity: 0.7; transform: scale(1.3); box-shadow: 0 0 0 8px rgba(245, 194, 17, 0); }
+        }
+
+        .btn-login-public {
+            background: linear-gradient(135deg, var(--dapo-yellow), var(--dapo-orange));
+            color: var(--dapo-blue-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 800;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 14px rgba(255, 120, 0, 0.4);
+        }
+
+        .btn-login-public:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 120, 0, 0.55);
+            filter: brightness(1.05);
+        }
+
+        .public-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--dapo-blue);
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(26, 95, 180, 0.12);
+            border: 1px solid var(--dapo-border);
+            font-weight: 600;
+        }
+
+        .live-indicator .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--dapo-green);
+            border-radius: 50%;
+            animation: pulseDot 2s infinite;
+        }
+
+        /* ============ LOGIN PAGE ============ */
+        .login-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dapo-blue-dark) 0%, var(--dapo-blue) 50%, var(--dapo-teal-dark) 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page.active { display: flex; }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(245, 194, 17, 0.08) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            max-width: 440px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            border-top: 5px solid var(--dapo-yellow);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--dapo-blue-dark), var(--dapo-blue));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(245, 194, 17, 0.25), transparent 70%);
+            border-radius: 50%;
+        }
+
+        .login-header .logo { font-size: 3rem; margin-bottom: 10px; position: relative; z-index: 1; }
+        .login-header h1 { font-size: 1.3rem; margin-bottom: 6px; position: relative; z-index: 1; }
+        .login-header p { font-size: 0.85rem; opacity: 0.9; position: relative; z-index: 1; }
+
+        .login-tabs { display: flex; border-bottom: 2px solid var(--dapo-border); }
+
+        .login-tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--dapo-text-muted);
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .login-tab.active {
+            color: var(--dapo-blue);
+            border-bottom-color: var(--dapo-yellow);
+            background: #f0f6ff;
+        }
+
+        .login-tab:hover { background: #f0f6ff; }
+
+        .login-body { padding: 30px; }
+
+        .login-form { display: none; }
+        .login-form.active { display: block; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dapo-text);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 2px solid var(--dapo-border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            background: #fafffe;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--dapo-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.12);
+        }
+
+        .form-group .help { font-size: 0.75rem; color: var(--dapo-text-muted); margin-top: 4px; }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, var(--dapo-blue), var(--dapo-teal));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 8px;
+            box-shadow: 0 4px 14px rgba(26, 95, 180, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 95, 180, 0.45);
+        }
+
+        .btn-back-public {
+            width: 100%;
+            padding: 10px;
+            background: #eef4fb;
+            color: var(--dapo-text-muted);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-back-public:hover { background: #dbe9f7; color: var(--dapo-blue); }
+
+        .login-error {
+            background: #ffeef0;
+            color: var(--dapo-red);
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
+            display: none;
+            border-left: 4px solid var(--dapo-red);
+            font-weight: 600;
+        }
+
+        .login-error.show { display: block; }
+
+        .login-footer {
+            padding: 16px 30px;
+            background: #f0f6ff;
+            border-top: 1px solid var(--dapo-border);
+            font-size: 0.75rem;
+            color: var(--dapo-text-muted);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .default-creds {
+            background: #fff8e1;
+            border: 1px solid var(--dapo-yellow);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            font-size: 0.78rem;
+            color: #6d5a00;
+            font-weight: 600;
+        }
+
+        /* ============ MAIN APP ============ */
+        .app-container { display: none; }
+        .app-container.active { display: block; }
+
+        .topbar {
+            background: linear-gradient(135deg, var(--dapo-blue-dark) 0%, var(--dapo-blue) 60%, var(--dapo-teal-dark) 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(13, 59, 122, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 3px solid var(--dapo-yellow);
+        }
+
+        .topbar-left h1 { font-size: 1.05rem; margin-bottom: 2px; font-weight: 700; }
+        .topbar-left p { font-size: 0.72rem; opacity: 0.9; }
+
+        .topbar-right {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 194, 17, 0.25);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            border: 1px solid rgba(245, 194, 17, 0.5);
+            font-weight: 700;
+        }
+
+        .user-badge .avatar {
+            width: 24px;
+            height: 24px;
+            background: var(--dapo-yellow);
+            color: var(--dapo-blue-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .topbar-btn {
+            background: rgba(255,255,255,0.18);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.35);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .topbar-btn:hover { 
+            background: var(--dapo-yellow); 
+            color: var(--dapo-blue-dark);
+            border-color: var(--dapo-yellow);
+        }
+
+        .topbar-btn.logout {
+            background: rgba(224, 27, 36, 0.5);
+            border-color: rgba(224, 27, 36, 0.7);
+        }
+
+        .topbar-btn.logout:hover {
+            background: var(--dapo-red);
+            color: white;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .connection-status.connected { background: rgba(46, 194, 126, 0.35); border: 1px solid var(--dapo-green); }
+        .connection-status.disconnected { background: rgba(224, 27, 36, 0.35); border: 1px solid var(--dapo-red); }
+        .connection-status.testing { background: rgba(245, 194, 17, 0.35); border: 1px solid var(--dapo-yellow); }
+
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+        .auto-refresh-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(245, 194, 17, 0.25);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border: 1px solid rgba(245, 194, 17, 0.5);
+            color: white;
+            cursor: help;
+        }
+
+        .sync-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 169, 165, 0.35);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border: 1px solid rgba(0, 169, 165, 0.6);
+            color: white;
+        }
+
+        .sync-status-badge.syncing {
+            background: rgba(245, 194, 17, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            background: white;
+            border-right: 2px solid var(--dapo-border);
+            overflow-y: auto;
+            height: calc(100vh - 60px);
+            position: sticky;
+            top: 60px;
+        }
+
+        .sidebar-header {
+            padding: 14px;
+            border-bottom: 2px solid var(--dapo-border);
+            background: linear-gradient(180deg, #f0f6ff 0%, #e3eefb 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-header h3 { font-size: 0.9rem; color: var(--dapo-blue); margin-bottom: 8px; font-weight: 800; }
+
+        .sidebar-search {
+            width: 100%;
+            padding: 7px 10px;
+            border: 2px solid var(--dapo-border);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: white;
+        }
+
+        .sidebar-search:focus { outline: none; border-color: var(--dapo-blue); box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.12); }
+
+        .filter-tabs { display: flex; gap: 4px; margin-top: 8px; }
+
+        .filter-tab {
+            flex: 1;
+            padding: 5px;
+            border: 2px solid var(--dapo-border);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-align: center;
+            transition: all 0.2s;
+            font-weight: 700;
+            color: var(--dapo-text-muted);
+        }
+
+        .filter-tab.active { 
+            background: linear-gradient(135deg, var(--dapo-blue), var(--dapo-teal)); 
+            color: white; 
+            border-color: var(--dapo-blue); 
+        }
+
+        .sidebar-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
+
+        .sidebar-stat {
+            background: white;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            border: 2px solid var(--dapo-border);
+        }
+
+        .sidebar-stat .num { font-size: 1.1rem; font-weight: 800; color: var(--dapo-blue); }
+        .sidebar-stat .lbl { font-size: 0.62rem; color: var(--dapo-text-muted); font-weight: 700; }
+
+        .lembaga-list { padding: 6px; }
+
+        .lembaga-item {
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 3px;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            border: 1px solid transparent;
+        }
+
+        .lembaga-item:hover { background: #f0f6ff; border-color: var(--dapo-border); }
+        .lembaga-item.active { 
+            background: linear-gradient(90deg, #e3eefb 0%, #f0f6ff 100%); 
+            border-left-color: var(--dapo-yellow);
+            border-color: var(--dapo-border);
+            box-shadow: 0 2px 8px rgba(26, 95, 180, 0.12);
+        }
+
+        .lembaga-item .nama {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--dapo-text);
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lembaga-item .progress-mini {
+            height: 4px;
+            background: #e0e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 3px;
+        }
+
+        .lembaga-item .progress-mini-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--dapo-green), var(--dapo-teal));
+            transition: width 0.3s;
+        }
+
+        .lembaga-item .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.62rem;
+            color: var(--dapo-text-muted);
+            margin-top: 3px;
+            font-weight: 600;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 0.58rem;
+            font-weight: 800;
+        }
+
+        .type-badge.sdn { background: #d0e4ff; color: var(--dapo-blue-dark); }
+        .type-badge.sds { background: #fff2cc; color: #8a6d00; }
+
+        .main { padding: 20px; overflow-y: auto; }
+
+        .welcome-screen {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(26, 95, 180, 0.08);
+            border: 2px solid var(--dapo-border);
+        }
+
+        .welcome-screen h2 { color: var(--dapo-blue); margin-bottom: 10px; font-weight: 800; }
+        .welcome-screen p { color: var(--dapo-text-muted); margin-bottom: 16px; font-size: 0.9rem; }
+
+        /* ============ KPI CARDS ============ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid var(--dapo-border);
+            border-top: 5px solid;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 28px rgba(26, 95, 180, 0.2);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(26, 95, 180, 0.05), transparent 70%);
+            border-radius: 50%;
+        }
+
+        .kpi-card.blue { border-top-color: var(--dapo-blue); }
+        .kpi-card.green { border-top-color: var(--dapo-green); }
+        .kpi-card.orange { border-top-color: var(--dapo-orange); }
+        .kpi-card.red { border-top-color: var(--dapo-red); }
+        .kpi-card.purple { border-top-color: var(--dapo-purple); }
+        .kpi-card.teal { border-top-color: var(--dapo-teal); }
+
+        .kpi-card .kpi-icon {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 2rem;
+            opacity: 0.2;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 0.72rem;
+            color: var(--dapo-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--dapo-blue-dark);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 0.72rem;
+            color: var(--dapo-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+        }
+
+        .kpi-card .kpi-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .kpi-trend.up { background: #d4f7e3; color: var(--dapo-green-dark); }
+        .kpi-trend.down { background: #ffe0e2; color: var(--dapo-red); }
+        .kpi-trend.neutral { background: #e3eefb; color: var(--dapo-blue-dark); }
+
+        /* ============ PROGRESS RING ============ */
+        .progress-ring-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #f0f6ff 0%, #e0f0f0 100%);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            text-align: left;
+            border: 2px solid var(--dapo-border);
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            flex-shrink: 0;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+            width: 140px;
+            height: 140px;
+        }
+
+        .progress-ring .ring-bg {
+            fill: none;
+            stroke: #d0e0f0;
+            stroke-width: 12;
+        }
+
+        .progress-ring .ring-fill {
+            fill: none;
+            stroke: url(#ringGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-ring .ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-ring .ring-percent {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dapo-blue-dark);
+            line-height: 1;
+        }
+
+        .progress-ring .ring-label {
+            font-size: 0.65rem;
+            color: var(--dapo-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .progress-ring-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-ring-info h3 {
+            font-size: 1.1rem;
+            color: var(--dapo-blue);
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .progress-ring-info p {
+            font-size: 0.82rem;
+            color: var(--dapo-text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .progress-ring-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .progress-ring-stat {
+            background: white;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--dapo-border);
+        }
+
+        .progress-ring-stat .num {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dapo-blue);
+        }
+
+        .progress-ring-stat .lbl {
+            font-size: 0.62rem;
+            color: var(--dapo-text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* ============ CHARTS ============ */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+            border: 2px solid var(--dapo-border);
+        }
+
+        .chart-card h3 {
+            font-size: 0.9rem;
+            color: var(--dapo-blue);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 800;
+        }
+
+        .chart-card canvas { max-height: 280px; }
+
+        /* ============ INSIGHTS ============ */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 10px rgba(26, 95, 180, 0.08);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            border: 2px solid var(--dapo-border);
+            border-left: 5px solid;
+            transition: transform 0.2s;
+        }
+
+        .insight-card:hover { transform: translateX(4px); }
+
+        .insight-card.success { border-left-color: var(--dapo-green); background: linear-gradient(90deg, #f0fff7 0%, white 30%); }
+        .insight-card.warning { border-left-color: var(--dapo-yellow); background: linear-gradient(90deg, #fffbf0 0%, white 30%); }
+        .insight-card.danger { border-left-color: var(--dapo-red); background: linear-gradient(90deg, #fff5f5 0%, white 30%); }
+        .insight-card.info { border-left-color: var(--dapo-blue); background: linear-gradient(90deg, #f0f6ff 0%, white 30%); }
+
+        .insight-card .insight-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .insight-card .insight-body { flex: 1; }
+        .insight-card .insight-title { font-size: 0.82rem; font-weight: 800; color: var(--dapo-blue); margin-bottom: 3px; }
+        .insight-card .insight-text { font-size: 0.75rem; color: var(--dapo-text-muted); line-height: 1.4; }
+
+        /* ============ HEATMAP ============ */
+        .heatmap-wrapper {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            text-align: left;
+            border: 2px solid var(--dapo-border);
+        }
+
+        .heatmap-wrapper h3 {
+            font-size: 0.9rem;
+            color: var(--dapo-blue);
+            margin-bottom: 14px;
+            font-weight: 800;
+        }
+
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
+            gap: 4px;
+            min-width: 100%;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            z-index: 10;
+        }
+
+        .heatmap-cell[data-level="0"] { background: #e0e8f0; }
+        .heatmap-cell[data-level="1"] { background: #ffb3b8; }
+        .heatmap-cell[data-level="2"] { background: #ffcc80; }
+        .heatmap-cell[data-level="3"] { background: #ffe082; }
+        .heatmap-cell[data-level="4"] { background: #a5e6b8; }
+        .heatmap-cell[data-level="5"] { background: var(--dapo-green); }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.72rem;
+            color: var(--dapo-text-muted);
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            font-weight: 600;
+        }
+
+        .heatmap-legend-item { display: flex; align-items: center; gap: 4px; }
+        .heatmap-legend-box { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* ============ TABLE ============ */
+        .dashboard-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+            text-align: left;
+            border: 2px solid var(--dapo-border);
+        }
+
+        .dashboard-section h3 {
+            font-size: 1rem;
+            color: var(--dapo-blue);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+        }
+
+        .dashboard-filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .dashboard-filter-bar select,
+        .dashboard-filter-bar input {
+            padding: 7px 12px;
+            border: 2px solid var(--dapo-border);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            background: white;
+        }
+
+        .dashboard-filter-bar select:focus,
+        .dashboard-filter-bar input:focus {
+            outline: none;
+            border-color: var(--dapo-blue);
+            box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.12);
+        }
+
+        .dashboard-filter-bar label {
+            font-size: 0.75rem;
+            color: var(--dapo-text-muted);
+            font-weight: 700;
+        }
+
+        .lembaga-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .lembaga-summary-table th {
+            background: linear-gradient(180deg, #e3eefb 0%, #d0e4f7 100%);
+            padding: 10px;
+            text-align: left;
+            font-size: 0.7rem;
+            color: var(--dapo-blue-dark);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--dapo-blue);
+            position: sticky;
+            top: 0;
+            font-weight: 800;
+        }
+
+        .lembaga-summary-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e8eef5;
+        }
+
+        .lembaga-summary-table tr:hover td { background: #f0f6ff; }
+
+        .lembaga-summary-table .progress-mini-bar {
+            height: 8px;
+            background: #e0e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 80px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .lembaga-summary-table .progress-mini-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--dapo-green), var(--dapo-teal));
+        }
+
+        .lembaga-summary-table .status-done { color: var(--dapo-green-dark); font-weight: 800; }
+        .lembaga-summary-table .status-progress { color: var(--dapo-orange); font-weight: 800; }
+        .lembaga-summary-table .status-empty { color: var(--dapo-red); font-weight: 800; }
+
+        .lembaga-summary-table .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 0.7rem;
+            background: #e0e8f0;
+            color: var(--dapo-text-muted);
+        }
+
+        .lembaga-summary-table .rank-badge.top1 { background: linear-gradient(135deg, #ffd700, #ffb300); color: #7a5c00; }
+        .lembaga-summary-table .rank-badge.top2 { background: linear-gradient(135deg, #d8d8d8, #b0b0b0); color: #444; }
+        .lembaga-summary-table .rank-badge.top3 { background: linear-gradient(135deg, #cd7f32, #a05a1c); color: white; }
+
+        /* ============ CHECKLIST ============ */
+        .lembaga-detail { display: none; }
+        .lembaga-detail.active { display: block; }
+
+        .detail-header {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 2px solid var(--dapo-border);
+            border-top: 5px solid var(--dapo-yellow);
+        }
+
+        .detail-header-left h2 { color: var(--dapo-blue); font-size: 1.1rem; margin-bottom: 3px; font-weight: 800; }
+        .detail-header-left .sub { color: var(--dapo-text-muted); font-size: 0.8rem; font-weight: 600; }
+
+        .detail-stats { display: flex; gap: 12px; }
+
+        .detail-stat {
+            text-align: center;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #f0f6ff, #e0f0f0);
+            border-radius: 8px;
+            border: 1px solid var(--dapo-border);
+        }
+
+        .detail-stat .num { font-size: 1.2rem; font-weight: 800; color: var(--dapo-blue); }
+        .detail-stat .lbl { font-size: 0.65rem; color: var(--dapo-text-muted); font-weight: 700; }
+
+        .checklist-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 14px rgba(26, 95, 180, 0.08);
+            margin-bottom: 14px;
+            border: 2px solid var(--dapo-border);
+        }
+
+        .checklist-card-header {
+            background: linear-gradient(135deg, var(--dapo-blue-dark), var(--dapo-blue), var(--dapo-teal-dark));
+            color: white;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--dapo-yellow);
+        }
+
+        .checklist-card-header h3 { font-size: 0.9rem; font-weight: 700; }
+        .checklist-card-header .progress-text {
+            font-size: 0.8rem;
+            background: rgba(245, 194, 17, 0.9);
+            color: var(--dapo-blue-dark);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #e3eefb; }
+
+        thead th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--dapo-blue-dark);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--dapo-blue);
+        }
+
+        thead th:first-child { text-align: center; width: 45px; }
+        thead th:nth-child(2) { width: 45px; text-align: center; }
+        thead th:nth-child(4) { width: 90px; text-align: center; }
+        thead th:nth-child(5) { width: 280px; }
+
+        tbody tr { border-bottom: 1px solid #e8eef5; transition: background 0.2s; }
+        tbody tr:hover { background: #f0f6ff; }
+        tbody tr.checked { background: linear-gradient(90deg, #f0fff7 0%, #e8fff2 100%); }
+
+        tbody td { padding: 12px; font-size: 0.82rem; vertical-align: middle; }
+        tbody td:first-child, tbody td:nth-child(2), tbody td:nth-child(4) { text-align: center; }
+        tbody td:nth-child(2) { font-weight: 800; color: var(--dapo-blue); }
+
+        .custom-checkbox { position: relative; width: 20px; height: 20px; display: inline-block; }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid var(--dapo-border);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .custom-checkbox input:checked ~ .checkmark { 
+            background: linear-gradient(135deg, var(--dapo-green), var(--dapo-teal)); 
+            border-color: var(--dapo-green); 
+        }
+
+        .checkmark::after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox input:checked ~ .checkmark::after { display: block; }
+
+        .keterangan-text { line-height: 1.4; color: var(--dapo-text-muted); font-size: 0.78rem; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.68rem;
+            font-weight: 800;
+        }
+
+        .status-badge.terpenuhi { background: #d4f7e3; color: var(--dapo-green-dark); }
+        .status-badge.belum { background: #ffe0e2; color: var(--dapo-red); }
+
+        .upload-area { display: flex; flex-direction: column; gap: 5px; }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--dapo-blue), var(--dapo-teal));
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.72rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            width: fit-content;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(26, 95, 180, 0.25);
+        }
+
+        .upload-btn:hover { 
+            background: linear-gradient(135deg, var(--dapo-blue-dark), var(--dapo-blue)); 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 95, 180, 0.35);
+        }
+        .upload-btn:disabled { background: #c0ccd8; cursor: not-allowed; box-shadow: none; }
+        .upload-btn.uploading { background: linear-gradient(135deg, var(--dapo-yellow), var(--dapo-orange)); cursor: wait; color: var(--dapo-blue-dark); }
+
+        .upload-btn.view { background: linear-gradient(135deg, var(--dapo-green), var(--dapo-teal)); }
+        .upload-btn.view:hover { background: linear-gradient(135deg, var(--dapo-green-dark), var(--dapo-teal-dark)); }
+        .upload-btn.view-disabled { background: #c0ccd8; cursor: not-allowed; }
+
+        .btn-row { display: flex; gap: 5px; flex-wrap: wrap; }
+
+        .file-list { display: flex; flex-direction: column; gap: 3px; margin-top: 3px; }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #e3eefb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            border: 1px solid var(--dapo-border);
+        }
+
+        .file-item .file-name {
+            flex: 1;
+            color: var(--dapo-text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 110px;
+            font-weight: 600;
+        }
+
+        .file-item .file-size { color: var(--dapo-text-muted); font-size: 0.62rem; font-weight: 600; }
+
+        .file-item .file-action {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dapo-blue);
+            padding: 2px 3px;
+            font-size: 0.72rem;
+            text-decoration: none;
+        }
+
+        .file-item .file-action.delete { color: var(--dapo-red); }
+        .file-item .file-action:hover { text-decoration: underline; }
+
+        .drive-link {
+            color: var(--dapo-blue);
+            font-size: 0.65rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-weight: 700;
+        }
+
+        .drive-link:hover { text-decoration: underline; }
+
+        .empty-files { color: var(--dapo-text-muted); font-size: 0.72rem; font-style: italic; }
+
+        /* ============ MODAL ============ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(13, 59, 122, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-top: 5px solid var(--dapo-yellow);
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, var(--dapo-blue-dark), var(--dapo-blue));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 { font-size: 0.95rem; font-weight: 700; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        .modal-body { padding: 18px; overflow-y: auto; flex: 1; }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--dapo-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.82rem; font-weight: 700; color: var(--dapo-text); }
+        .form-group input { width: 100%; padding: 8px 10px; border: 2px solid var(--dapo-border); border-radius: 6px; font-size: 0.85rem; font-family: inherit; }
+        .form-group input:focus { outline: none; border-color: var(--dapo-blue); box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.12); }
+        .form-group .help { font-size: 0.72rem; color: var(--dapo-text-muted); margin-top: 4px; }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--dapo-blue), var(--dapo-teal)); color: white; }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--dapo-blue-dark), var(--dapo-blue)); }
+        .btn-secondary { background: #e3eefb; color: var(--dapo-blue); }
+        .btn-secondary:hover { background: #d0e4f7; }
+
+        /* ============ TOAST ============ */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dapo-blue-dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            font-size: 0.82rem;
+            max-width: 350px;
+            font-weight: 600;
+            border-left: 5px solid var(--dapo-yellow);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: var(--dapo-green-dark); border-left-color: var(--dapo-green); }
+        .toast.error { background: var(--dapo-red); border-left-color: #ff6b6b; }
+        .toast.info { background: var(--dapo-blue); border-left-color: var(--dapo-teal); }
+
+        /* ============ UPLOAD PROGRESS ============ */
+        .upload-progress {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 14px 18px;
+            box-shadow: 0 6px 24px rgba(26, 95, 180, 0.2);
+            z-index: 500;
+            min-width: 260px;
+            display: none;
+            border-left: 5px solid var(--dapo-yellow);
+        }
+
+        .upload-progress.show { display: block; }
+        .upload-progress .title { font-size: 0.82rem; font-weight: 800; margin-bottom: 8px; color: var(--dapo-blue); }
+        .upload-progress .bar { height: 8px; background: #e0e8f0; border-radius: 4px; overflow: hidden; }
+        .upload-progress .bar-fill { height: 100%; background: linear-gradient(90deg, var(--dapo-green), var(--dapo-teal)); transition: width 0.3s; }
+        .upload-progress .info { font-size: 0.7rem; color: var(--dapo-text-muted); margin-top: 6px; font-weight: 600; }
+
+        /* ============ LOADING ============ */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(13, 59, 122, 0.6);
+            z-index: 1500;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-overlay.active { display: flex; }
+
+        .loading-box {
+            background: white;
+            padding: 28px 36px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+            border-top: 5px solid var(--dapo-yellow);
+        }
+
+        .loading-spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #e0e8f0;
+            border-top-color: var(--dapo-blue);
+            border-right-color: var(--dapo-teal);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-box .msg { font-size: 0.85rem; color: var(--dapo-blue); font-weight: 700; }
+
+        @media (max-width: 968px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: relative; height: auto; max-height: 350px; top: 0; }
+            .topbar { flex-direction: column; align-items: flex-start; }
+            .topbar-right { width: 100%; justify-content: flex-start; }
+            thead th, tbody td { padding: 8px 6px; font-size: 0.72rem; }
+            .detail-header { flex-direction: column; align-items: flex-start; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .progress-ring-wrapper { flex-direction: column; text-align: center; }
+            .progress-ring-stats { width: 100%; }
+            .public-header-content { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ PUBLIC DASHBOARD ============ -->
+<div class="public-page" id="publicPage">
+    <div class="public-header">
+        <div class="public-header-content">
+            <div class="public-header-left">
+                <h1>📋 Dashboard Data Dapodik 2027</h1>
+                <p>Sekolah Dasar Kecamatan Sampang • Kab. Sampang • 77 Lembaga</p>
+            </div>
+            <div class="public-header-right">
+                <div class="public-badge">
+                    <span class="pulse-dot"></span>
+                    <span>LIVE</span>
+                </div>
+                <div class="public-badge" id="publicLastUpdate">
+                    🕐 Update: Memuat...
+                </div>
+                <button class="btn-login-public" onclick="showLogin()">
+                    🔐 Login Admin / Lembaga
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="public-container">
+        <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>Data diperbarui otomatis setiap 5 menit</span>
+        </div>
+
+        <div id="publicDashboard"></div>
+    </div>
+</div>
+
+<!-- ============ LOGIN PAGE ============ -->
+<div class="login-page" id="loginPage">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">📋</div>
+            <h1>Data Dapodik 2027 - Kecamatan Sampang</h1>
+            <p>77 Lembaga • Kab. Sampang • Google Drive</p>
+        </div>
+
+        <div class="login-tabs">
+            <div class="login-tab active" data-role="admin">👨‍💼 Admin</div>
+            <div class="login-tab" data-role="lembaga">🏫 Lembaga</div>
+        </div>
+
+        <div class="login-body">
+            <div class="login-error" id="loginError"></div>
+
+            <form class="login-form active" id="formAdmin" onsubmit="handleLogin(event, 'admin')">
+                <div class="default-creds">
+                    Hanya admin yang bisa login
+                </div>
+                <div class="form-group">
+                    <label>Username Admin</label>
+                    <input type="text" id="adminUsername" placeholder="Masukkan username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="adminPassword" placeholder="Masukkan password" required>
+                </div>
+                <button type="submit" class="login-btn">🔐 Masuk sebagai Admin</button>
+                <button type="button" class="btn-back-public" onclick="hideLogin()">← Kembali ke Dashboard Publik</button>
+            </form>
+
+            <form class="login-form" id="formLembaga" onsubmit="handleLogin(event, 'lembaga')">
+                <div class="default-creds">
+                    <strong>💡 Cara Login:</strong><br>
+                    Pilih sekolah, lalu masukkan password sesuai data yang diberikan.
+                </div>
+                <div class="form-group">
+                    <label>Kode Sekolah</label>
+                    <select id="lembagaSelect" required>
+                        <option value="">-- Pilih Sekolah --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="lembagaPassword" placeholder="Masukkan password" required>
+                    <div class="help">Gunakan password yang telah ditentukan untuk setiap sekolah.</div>
+                </div>
+                <button type="submit" class="login-btn">🔐 Masuk sebagai Lembaga</button>
+                <button type="button" class="btn-back-public" onclick="hideLogin()">← Kembali ke Dashboard Publik</button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            © 2026 Dinas Pendidikan Kab. Sampang
+        </div>
+    </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div class="app-container" id="appContainer">
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>📋 Data Dapodik 2027 - Kecamatan Sampang</h1>
+            <p id="topbarSubtitle">77 Lembaga • Kab. Sampang</p>
+        </div>
+        <div class="topbar-right">
+            <div class="connection-status connected" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span id="connectionText">Terhubung</span>
+            </div>
+            <div class="auto-refresh-badge" id="autoRefreshBadge" title="Auto-refresh aktif setiap 5 menit">
+                <span>⏰</span>
+                <span id="refreshCountdown">05:00</span>
+            </div>
+            <div class="sync-status-badge" id="syncStatusBadge" title="Status sinkronisasi dengan server">
+                <span id="syncIcon">☁️</span>
+                <span id="syncText">Tersinkron</span>
+            </div>
+            <button class="topbar-btn" onclick="manualSync()" title="Sync manual dari server">🔄 Sync</button>
+            <button class="topbar-btn" onclick="exportSummary()" id="btnExport">📊 Export Rekap</button>
+            <button class="topbar-btn" onclick="openDriveFolder()">📁 Buka Drive</button>
+            <button class="topbar-btn" onclick="viewPublicDashboard()">👁️ Lihat Dashboard Publik</button>
+            <div class="user-badge">
+                <span class="avatar" id="userAvatar"></span>
+                <span id="userName">-</span>
+            </div>
+            <button class="topbar-btn logout" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3 id="sidebarTitle">🏫 Daftar Lembaga (77)</h3>
+                <input type="text" class="sidebar-search" id="searchLembaga" placeholder="Cari nama sekolah...">
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="filter-tab active" data-filter="all">Semua</button>
+                    <button class="filter-tab" data-filter="SDN">UPTD SDN</button>
+                    <button class="filter-tab" data-filter="SDS">SDS</button>
+                </div>
+                <div class="sidebar-stats" id="sidebarStats">
+                    <div class="sidebar-stat">
+                        <div class="num" id="totalLembaga">77</div>
+                        <div class="lbl">Total</div>
+                    </div>
+                    <div class="sidebar-stat">
+                        <div class="num" id="completeLembaga">0</div>
+                        <div class="lbl">Lengkap</div>
+                    </div>
+                    <div class="sidebar-stat">
+                        <div class="num" id="sdnCount">64</div>
+                        <div class="lbl">SDN</div>
+                    </div>
+                </div>
+            </div>
+            <div class="lembaga-list" id="lembagaList"></div>
+        </aside>
+
+        <main class="main">
+            <div class="welcome-screen" id="welcomeScreen">
+                <h2>👋 Selamat Datang, <span id="welcomeName">Admin</span></h2>
+                <p id="welcomeText">Pilih lembaga dari sidebar untuk mengelola kelengkapan data verifikasi TPG</p>
+                <div id="privateDashboard"></div>
+            </div>
+
+            <div class="lembaga-detail" id="lembagaDetail">
+                <div class="detail-header">
+                    <div class="detail-header-left">
+                        <h2 id="detailNama">-</h2>
+                        <div class="sub" id="detailSub">-</div>
+                    </div>
+                    <div class="detail-stats">
+                        <div class="detail-stat">
+                            <div class="num" id="statChecked">0/5</div>
+                            <div class="lbl">Checklist</div>
+                        </div>
+                        <div class="detail-stat">
+                            <div class="num" id="statFiles">0</div>
+                            <div class="lbl">File di Drive</div>
+                        </div>
+                        <div class="detail-stat">
+                            <div class="num" id="statPercent">0%</div>
+                            <div class="lbl">Progress</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checklist-card">
+                    <div class="checklist-card-header">
+                        <h3>📝 Checklist Kelengkapan Data</h3>
+                        <span class="progress-text" id="progressText">0/5</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>✓</th>
+                                <th>No</th>
+                                <th>Jenis Data</th>
+                                <th>Status</th>
+                                <th>Aksi & Upload ke Google Drive</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checklistBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- MODAL LIHAT FILE -->
+<div class="modal-overlay" id="fileViewerModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="fileViewerTitle">📁 Daftar File</h3>
+            <button class="modal-close" onclick="closeModal('fileViewerModal')">×</button>
+        </div>
+        <div class="modal-body" id="fileViewerBody"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('fileViewerModal')">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<div class="upload-progress" id="uploadProgress">
+    <div class="title">📤 Mengupload ke Google Drive...</div>
+    <div class="bar"><div class="bar-fill" id="uploadBarFill" style="width: 0%"></div></div>
+    <div class="info" id="uploadInfo">Mempersiapkan file...</div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="loading-spinner"></div>
+        <div class="msg" id="loadingMsg">Memuat data dari server...</div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA ITEMS (5 ITEM) ============
+const dataItems = [
+    { no: 1, jenis: "SPTJM", keterangan: "Surat Pernyataan Tanggung Jawab Mutlak (SPTJM) Kepala Sekolah" },
+    { no: 2, jenis: "Profil", keterangan: "Profil Sekolah uji petik dalam bentuk excel tarikan dari dapodik" },
+    { no: 3, jenis: "Daftar PD", keterangan: "Daftar Peserta Didik (PD) aktif tahun ajaran berjalan" },
+    { no: 4, jenis: "Daftar Guru", keterangan: "Daftar Guru beserta status kepegawaian dan mata pelajaran" },
+    { no: 5, jenis: "Daftar Tendik", keterangan: "Daftar Tenaga Kependidikan (Tendik) sekolah" }
+];
+
+// ============ 77 LEMBAGA ============
+const lembagaList = [
+    { id: "LMB001", kode: "SDN-001", nama: "UPTD SDN AENGSAREH 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB002", kode: "SDN-002", nama: "UPTD SDN AENGSAREH 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB003", kode: "SDN-003", nama: "UPTD SDN AENGSAREH 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB004", kode: "SDN-004", nama: "UPTD SDN BANYUANYAR 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB005", kode: "SDN-005", nama: "UPTD SDN BANYUANYAR 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB006", kode: "SDN-006", nama: "UPTD SDN BANYUANYAR 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB007", kode: "SDN-007", nama: "UPTD SDN BANYUANYAR 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB008", kode: "SDN-008", nama: "UPTD SDN BANYUMAS", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB009", kode: "SDN-009", nama: "UPTD SDN BARUH 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB010", kode: "SDN-010", nama: "UPTD SDN BARUH 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB011", kode: "SDN-011", nama: "UPTD SDN BARUH 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB012", kode: "SDN-012", nama: "UPTD SDN DALPENANG 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB013", kode: "SDN-013", nama: "UPTD SDN DALPENANG 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB014", kode: "SDN-014", nama: "UPTD SDN DALPENANG 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB015", kode: "SDN-015", nama: "UPTD SDN GUNUNG MADDAH 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB016", kode: "SDN-016", nama: "UPTD SDN GUNUNG MADDAH 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB017", kode: "SDN-017", nama: "UPTD SDN GUNUNG MADDAH 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB018", kode: "SDN-018", nama: "UPTD SDN GUNUNG MADDAH 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB019", kode: "SDN-019", nama: "UPTD SDN GUNUNG MADDAH 5", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB020", kode: "SDN-020", nama: "UPTD SDN GUNUNG SEKAR 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB021", kode: "SDN-021", nama: "UPTD SDN GUNUNG SEKAR 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB023", kode: "SDN-023", nama: "UPTD SDN GUNUNG SEKAR 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB024", kode: "SDN-024", nama: "UPTD SDN GUNUNG SEKAR 5", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB025", kode: "SDN-025", nama: "UPTD SDN GUNUNG SEKAR 6", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB026", kode: "SDN-026", nama: "UPTD SDN KAMUNING 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB027", kode: "SDN-027", nama: "UPTD SDN KAMUNING 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB028", kode: "SDN-028", nama: "UPTD SDN KAMUNING 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB029", kode: "SDN-029", nama: "UPTD SDN KARANGDALEM 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB031", kode: "SDN-031", nama: "UPTD SDN KARANGDALEM 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB032", kode: "SDN-032", nama: "UPTD SDN KARANGDALEM 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB033", kode: "SDN-033", nama: "UPTD SDN KARANGDALEM 5", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB034", kode: "SDN-034", nama: "UPTD SDN P.MANDANGIN 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB035", kode: "SDN-035", nama: "UPTD SDN P.MANDANGIN 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB036", kode: "SDN-036", nama: "UPTD SDN P.MANDANGIN 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB037", kode: "SDN-037", nama: "UPTD SDN P.MANDANGIN 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB038", kode: "SDN-038", nama: "UPTD SDN P.MANDANGIN 5", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB039", kode: "SDN-039", nama: "UPTD SDN P.MANDANGIN 6", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB040", kode: "SDN-040", nama: "UPTD SDN P.MANDANGIN 7", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB041", kode: "SDN-041", nama: "UPTD SDN P.MANDANGIN 8", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB042", kode: "SDN-042", nama: "UPTD SDN P.MANDANGIN 9", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB043", kode: "SDN-043", nama: "UPTD SDN PANGGUNG 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB044", kode: "SDN-044", nama: "UPTD SDN PANGGUNG 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB045", kode: "SDN-045", nama: "UPTD SDN PANGILEN 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB046", kode: "SDN-046", nama: "UPTD SDN PANGILEN 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB047", kode: "SDN-047", nama: "UPTD SDN PANGILEN 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB048", kode: "SDN-048", nama: "UPTD SDN PANGILEN 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB049", kode: "SDN-049", nama: "UPTD SDN PASEYAN 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB050", kode: "SDN-050", nama: "UPTD SDN PASEYAN 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB051", kode: "SDN-051", nama: "UPTD SDN PEKALONGAN 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB052", kode: "SDN-052", nama: "UPTD SDN PEKALONGAN 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB053", kode: "SDN-053", nama: "UPTD SDN PEKALONGAN 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB054", kode: "SDN-054", nama: "UPTD SDN POLAGAN 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB055", kode: "SDN-055", nama: "UPTD SDN POLAGAN 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB056", kode: "SDN-056", nama: "UPTD SDN POLAGAN 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB057", kode: "SDN-057", nama: "UPTD SDN POLAGAN 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB058", kode: "SDN-058", nama: "UPTD SDN RONGTENGAH 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB059", kode: "SDN-059", nama: "UPTD SDN RONGTENGAH 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB060", kode: "SDN-060", nama: "UPTD SDN RONGTENGAH 3", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB061", kode: "SDN-061", nama: "UPTD SDN RONGTENGAH 4", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB062", kode: "SDN-062", nama: "UPTD SDN RONGTENGAH 5", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB063", kode: "SDN-063", nama: "UPTD SDN TAMANSAREH 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB064", kode: "SDN-064", nama: "UPTD SDN TAMANSAREH 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB065", kode: "SDN-065", nama: "UPTD SDN TANGGUMONG 1", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB066", kode: "SDN-066", nama: "UPTD SDN TANGGUMONG 2", jenis: "SDN", kecamatan: "Sampang" },
+    { id: "LMB067", kode: "SDS-001", nama: "SDS AL - MADANI", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB068", kode: "SDS-002", nama: "SDS AL FITROH", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB069", kode: "SDS-003", nama: "SDS AL MUAWANAH", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB070", kode: "SDS-004", nama: "SDS ISLAM AL - KAROMAH", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB071", kode: "SDS-005", nama: "SDS ISLAM BAITUR ROHMAN", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB072", kode: "SDS-006", nama: "SDS ISLAM DARUL IMAN", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB073", kode: "SDS-007", nama: "SDS ISLAM HIDAYATUL FADHILAH", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB074", kode: "SDS-008", nama: "SDS ISLAM MAARIF NU 2", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB075", kode: "SDS-009", nama: "SDS ISLAM NURUL JADID", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB076", kode: "SDS-010", nama: "SDS ISLAM TERPADU AL - FAIZIN", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB077", kode: "SDS-011", nama: "SDS ISLAM TERPADU NURUL HIDAYAH", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB078", kode: "SDS-012", nama: "SDS MAARIF NU SAMPANG", jenis: "SDS", kecamatan: "Sampang" },
+    { id: "LMB079", kode: "SDS-013", nama: "SDS NAHDLATUL ULAMA", jenis: "SDS", kecamatan: "Sampang" }
+];
+
+// ============ PASSWORD MAP ============
+const passwordMap = {
+    "UPTD SDN AENGSAREH 1": "20529219", "UPTD SDN AENGSAREH 2": "20529218", "UPTD SDN AENGSAREH 3": "20529217",
+    "UPTD SDN BANYUANYAR 1": "20528402", "UPTD SDN BANYUANYAR 2": "20528418", "UPTD SDN BANYUANYAR 3": "20528419",
+    "UPTD SDN BANYUANYAR 4": "20528420", "UPTD SDN BANYUMAS": "20528425", "UPTD SDN BARUH 1": "20528421",
+    "UPTD SDN BARUH 2": "20528401", "UPTD SDN BARUH 3": "20528400", "UPTD SDN DALPENANG 1": "20528511",
+    "UPTD SDN DALPENANG 2": "20528510", "UPTD SDN DALPENANG 3": "20528509", "UPTD SDN GUNUNG MADDAH 1": "20528443",
+    "UPTD SDN GUNUNG MADDAH 2": "20528442", "UPTD SDN GUNUNG MADDAH 3": "20528441", "UPTD SDN GUNUNG MADDAH 4": "20528440",
+    "UPTD SDN GUNUNG MADDAH 5": "20528439", "UPTD SDN GUNUNG SEKAR 1": "20528475", "UPTD SDN GUNUNG SEKAR 2": "20528474",
+    "UPTD SDN GUNUNG SEKAR 4": "20528472", "UPTD SDN GUNUNG SEKAR 5": "20528471", "UPTD SDN GUNUNG SEKAR 6": "20528470",
+    "UPTD SDN KAMUNING 1": "20528256", "UPTD SDN KAMUNING 2": "20528255", "UPTD SDN KAMUNING 3": "20528254",
+    "UPTD SDN KARANGDALEM 1": "20528280", "UPTD SDN KARANGDALEM 3": "20528278", "UPTD SDN KARANGDALEM 4": "20528277",
+    "UPTD SDN KARANGDALEM 5": "20528276", "UPTD SDN P.MANDANGIN 1": "20528721", "UPTD SDN P.MANDANGIN 2": "20528720",
+    "UPTD SDN P.MANDANGIN 3": "20528719", "UPTD SDN P.MANDANGIN 4": "20528718", "UPTD SDN P.MANDANGIN 5": "20528716",
+    "UPTD SDN P.MANDANGIN 6": "20528715", "UPTD SDN P.MANDANGIN 7": "20528714", "UPTD SDN P.MANDANGIN 8": "20528713",
+    "UPTD SDN P.MANDANGIN 9": "20528717", "UPTD SDN PANGGUNG 1": "20528681", "UPTD SDN PANGGUNG 2": "20528680",
+    "UPTD SDN PANGILEN 1": "20528677", "UPTD SDN PANGILEN 2": "20528676", "UPTD SDN PANGILEN 3": "20528675",
+    "UPTD SDN PANGILEN 4": "20528674", "UPTD SDN PASEYAN 1": "20528691", "UPTD SDN PASEYAN 2": "20528690",
+    "UPTD SDN PEKALONGAN 1": "20528706", "UPTD SDN PEKALONGAN 2": "20528722", "UPTD SDN PEKALONGAN 3": "20528723",
+    "UPTD SDN POLAGAN 1": "20528785", "UPTD SDN POLAGAN 2": "20528784", "UPTD SDN POLAGAN 3": "20528783",
+    "UPTD SDN POLAGAN 4": "20528782", "UPTD SDN RONGTENGAH 1": "20528752", "UPTD SDN RONGTENGAH 2": "20528751",
+    "UPTD SDN RONGTENGAH 3": "20528750", "UPTD SDN RONGTENGAH 4": "20528749", "UPTD SDN RONGTENGAH 5": "20528748",
+    "UPTD SDN TAMANSAREH 1": "20528573", "UPTD SDN TAMANSAREH 2": "20528589", "UPTD SDN TANGGUMONG 1": "20528520",
+    "UPTD SDN TANGGUMONG 2": "20528519",
+    "SDS AL - MADANI": "69824964", "SDS AL FITROH": "70050067", "SDS AL MUAWANAH": "69830692",
+    "SDS ISLAM AL - KAROMAH": "20529220", "SDS ISLAM BAITUR ROHMAN": "70025681", "SDS ISLAM DARUL IMAN": "69953346",
+    "SDS ISLAM HIDAYATUL FADHILAH": "69829535", "SDS ISLAM MAARIF NU 2": "20570796", "SDS ISLAM NURUL JADID": "20574119",
+    "SDS ISLAM TERPADU AL - FAIZIN": "20551774", "SDS ISLAM TERPADU NURUL HIDAYAH": "20558430",
+    "SDS MAARIF NU SAMPANG": "20571158", "SDS NAHDLATUL ULAMA": "69753155"
+};
+
+// ============ CONSTANTS ============
+const API_URL = 'https://script.google.com/macros/s/AKfycbw1ax18UdhpGFPwhHjoQNKdEU0T4xBunb-VQCazxUSKNb3x49BN6KaYdzT7c-5FLQg/exec';
+const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;
+const MAX_FILE_SIZE = 10;
+const TOTAL_ITEMS = 5;
+
+// ============ STATE ============
+let currentLembagaId = null;
+let currentFilter = 'all';
+let session = JSON.parse(localStorage.getItem('tpg_session') || 'null');
+let autoRefreshTimer = null;
+let countdownTimer = null;
+let lastRefreshTime = null;
+let isAutoRefreshing = false;
+let isSyncing = false;
+let charts = {};
+let isPublicMode = true;
+
+// ============ PASSWORD ============
+function getPasswords() { return JSON.parse(localStorage.getItem('tpg_passwords') || '{}'); }
+function savePasswords(pwds) { localStorage.setItem('tpg_passwords', JSON.stringify(pwds)); }
+
+function getLembagaPassword(kode) {
+    const pwds = getPasswords();
+    if (pwds[kode]) return pwds[kode];
+    const lmb = lembagaList.find(l => l.kode === kode);
+    if (lmb && passwordMap[lmb.nama]) return passwordMap[lmb.nama];
+    if (lmb) {
+        const n = lmb.nama.replace(/\s+/g, ' ').trim();
+        for (const [k, v] of Object.entries(passwordMap)) {
+            if (k.replace(/\s+/g, ' ').trim() === n) return v;
+        }
+    }
+    return '123456';
+}
+
+// ============ PUBLIC / LOGIN SWITCH ============
+function showLogin() {
+    isPublicMode = false;
+    document.getElementById('publicPage').style.display = 'none';
+    document.getElementById('loginPage').classList.add('active');
+    document.getElementById('appContainer').classList.remove('active');
+}
+
+function hideLogin() {
+    isPublicMode = true;
+    document.getElementById('publicPage').style.display = 'block';
+    document.getElementById('loginPage').classList.remove('active');
+    document.getElementById('appContainer').classList.remove('active');
+}
+
+function viewPublicDashboard() {
+    isPublicMode = true;
+    document.getElementById('publicPage').style.display = 'block';
+    document.getElementById('loginPage').classList.remove('active');
+    document.getElementById('appContainer').classList.remove('active');
+    renderPublicDashboard();
+}
+
+// ============ AUTH ============
+function handleLogin(event, role) {
+    event.preventDefault();
+    const errorEl = document.getElementById('loginError');
+    errorEl.classList.remove('show');
+
+    if (role === 'admin') {
+        const username = document.getElementById('adminUsername').value.trim();
+        const password = document.getElementById('adminPassword').value;
+        const adminCreds = JSON.parse(localStorage.getItem('tpg_admin_creds') || '{"username":"admin","password":"admin2026"}');
+        if (username === adminCreds.username && password === adminCreds.password) {
+            session = { role: 'admin', username, loginTime: new Date().toISOString() };
+            localStorage.setItem('tpg_session', JSON.stringify(session));
+            enterApp();
+        } else {
+            errorEl.textContent = '❌ Username atau password admin salah!';
+            errorEl.classList.add('show');
+        }
+    } else {
+        const kode = document.getElementById('lembagaSelect').value;
+        const password = document.getElementById('lembagaPassword').value;
+        if (!kode) {
+            errorEl.textContent = '❌ Pilih sekolah terlebih dahulu!';
+            errorEl.classList.add('show');
+            return;
+        }
+        if (password === getLembagaPassword(kode)) {
+            const lmb = lembagaList.find(l => l.kode === kode);
+            session = { role: 'lembaga', username: kode, lembagaId: lmb.id, lembagaKode: lmb.kode, lembagaNama: lmb.nama, loginTime: new Date().toISOString() };
+            localStorage.setItem('tpg_session', JSON.stringify(session));
+            enterApp();
+        } else {
+            errorEl.textContent = '❌ Password salah untuk sekolah ' + kode + '!';
+            errorEl.classList.add('show');
+        }
+    }
+}
+
+function handleLogout() {
+    if (!confirm('Yakin ingin logout?')) return;
+    stopAutoRefresh();
+    stopRefreshCountdown();
+    localStorage.removeItem('tpg_session');
+    session = null;
+    currentLembagaId = null;
+    hideLogin();
+    showToast('Berhasil logout', 'info');
+}
+
+function enterApp() {
+    isPublicMode = false;
+    document.getElementById('publicPage').style.display = 'none';
+    document.getElementById('loginPage').classList.remove('active');
+    document.getElementById('appContainer').classList.add('active');
+    
+    if (session.role === 'admin') {
+        document.getElementById('userName').textContent = 'Admin: ' + session.username;
+        document.getElementById('userAvatar').textContent = '👨‍💼';
+        document.getElementById('topbarSubtitle').textContent = 'Mode Admin • 77 Lembaga • Kab. Sampang';
+        document.getElementById('welcomeName').textContent = 'Admin';
+        document.getElementById('welcomeText').textContent = 'Anda memiliki akses penuh ke semua 77 lembaga. Pilih lembaga dari sidebar untuk mengelola data.';
+        document.getElementById('sidebarTitle').textContent = '🏫 Daftar Lembaga (77)';
+        document.getElementById('filterTabs').style.display = 'flex';
+        document.getElementById('sidebarStats').style.display = 'grid';
+        document.getElementById('btnExport').style.display = 'flex';
+        renderLembagaList();
+        renderPrivateDashboard();
+    } else {
+        const lmb = lembagaList.find(l => l.id === session.lembagaId);
+        document.getElementById('userName').textContent = lmb.kode;
+        document.getElementById('userAvatar').textContent = '🏫';
+        document.getElementById('topbarSubtitle').textContent = `Mode Lembaga • ${lmb.nama}`;
+        document.getElementById('welcomeName').textContent = lmb.nama;
+        document.getElementById('welcomeText').textContent = 'Anda login sebagai lembaga. Hanya data sekolah Anda yang dapat diakses.';
+        document.getElementById('sidebarTitle').textContent = '🏫 Sekolah Anda';
+        document.getElementById('filterTabs').style.display = 'none';
+        document.getElementById('sidebarStats').style.display = 'none';
+        document.getElementById('btnExport').style.display = 'none';
+        currentLembagaId = session.lembagaId;
+        renderLembagaList();
+        selectLembaga(session.lembagaId);
+    }
+    
+    updateConnectionStatus();
+    startAutoRefresh();
+    startRefreshCountdown();
+    
+    setTimeout(async () => {
+        showLoading(true, 'Memuat data dari server...');
+        const ok = await syncFromServer(true);
+        showLoading(false);
+        if (ok) {
+            showToast('✅ Data tersinkron dari server', 'success');
+            if (currentLembagaId) selectLembaga(currentLembagaId);
+        }
+    }, 300);
+}
+
+function checkSession() {
+    if (session) {
+        if (session.role === 'lembaga') {
+            const lmb = lembagaList.find(l => l.id === session.lembagaId);
+            if (!lmb) {
+                localStorage.removeItem('tpg_session');
+                session = null;
+                return;
+            }
+        }
+        enterApp();
+    } else {
+        hideLogin();
+        setTimeout(async () => {
+            await syncFromServer(true);
+            renderPublicDashboard();
+        }, 500);
+    }
+}
+
+// ============ AUTO REFRESH ============
+function startAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    lastRefreshTime = new Date();
+    autoRefreshTimer = setInterval(() => performAutoRefresh(), AUTO_REFRESH_INTERVAL);
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+    }
+}
+
+async function performAutoRefresh() {
+    if (isAutoRefreshing) return;
+    isAutoRefreshing = true;
+    try {
+        const success = await syncFromServer(true);
+        if (success) {
+            lastRefreshTime = new Date();
+            updatePublicLastUpdate();
+            if (!isPublicMode) showToast('🔄 Data tersinkron otomatis', 'info');
+        }
+    } catch (error) {
+        console.error('❌ Auto-refresh gagal:', error);
+    } finally {
+        isAutoRefreshing = false;
+    }
+}
+
+// ============ SYNC ============
+async function syncFromServer(silent = false) {
+    if (isSyncing) return false;
+    isSyncing = true;
+    
+    try {
+        if (!silent) updateConnectionStatus('testing');
+        updateSyncStatus('syncing', 'Sinkronisasi...');
+        
+        const response = await fetch(API_URL + '?action=sync&_t=' + Date.now(), {
+            method: 'GET', mode: 'cors', cache: 'no-cache'
+        });
+        
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            const serverData = result.data || {};
+            lembagaList.forEach(lmb => {
+                if (!serverData[lmb.id]) {
+                    serverData[lmb.id] = { checked: [], files: {} };
+                } else {
+                    if (!Array.isArray(serverData[lmb.id].checked)) serverData[lmb.id].checked = [];
+                    if (!serverData[lmb.id].files || typeof serverData[lmb.id].files !== 'object') {
+                        serverData[lmb.id].files = {};
+                    }
+                }
+            });
+            saveData(serverData);
+            
+            if (isPublicMode) {
+                renderPublicDashboard();
+            } else if (session) {
+                if (session.role === 'admin') {
+                    renderLembagaList();
+                    renderPrivateDashboard();
+                    if (currentLembagaId) renderChecklist();
+                } else {
+                    renderLembagaList();
+                    renderChecklist();
+                }
+            }
+            
+            updateConnectionStatus(true);
+            updateSyncStatus('synced', 'Tersinkron');
+            updatePublicLastUpdate();
+            return true;
+        } else {
+            throw new Error(result.message || 'Sync gagal');
+        }
+    } catch (err) {
+        updateConnectionStatus(false);
+        updateSyncStatus('error', 'Gagal sync');
+        return false;
+    } finally {
+        isSyncing = false;
+    }
+}
+
+function updateSyncStatus(status, text) {
+    const badge = document.getElementById('syncStatusBadge');
+    const icon = document.getElementById('syncIcon');
+    const txt = document.getElementById('syncText');
+    if (!badge) return;
+    badge.classList.remove('syncing');
+    if (status === 'syncing') {
+        badge.classList.add('syncing');
+        icon.textContent = '⏳';
+        txt.textContent = text;
+    } else if (status === 'synced') {
+        icon.textContent = '☁️';
+        txt.textContent = text;
+    } else if (status === 'error') {
+        icon.textContent = '⚠️';
+        txt.textContent = text;
+    }
+}
+
+function updatePublicLastUpdate() {
+    const el = document.getElementById('publicLastUpdate');
+    if (el) {
+        const now = new Date();
+        el.textContent = `🕐 Update: ${now.toLocaleTimeString('id-ID')}`;
+    }
+}
+
+async function manualSync() {
+    showToast('🔄 Menyinkronkan data...', 'info');
+    const ok = await syncFromServer(false);
+    if (ok && currentLembagaId) selectLembaga(currentLembagaId);
+}
+
+function getNextRefreshTime() {
+    if (!lastRefreshTime) return null;
+    return new Date(lastRefreshTime.getTime() + AUTO_REFRESH_INTERVAL);
+}
+
+// ============ COUNTDOWN ============
+function startRefreshCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    function updateCountdown() {
+        const nextRefresh = getNextRefreshTime();
+        const el = document.getElementById('refreshCountdown');
+        if (!el) return;
+        if (!nextRefresh) {
+            el.textContent = '--:--';
+            return;
+        }
+        const diff = nextRefresh - new Date();
+        if (diff <= 0) {
+            el.textContent = '00:00';
+            return;
+        }
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+}
+
+function stopRefreshCountdown() {
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+}
+
+// ============ CONNECTION STATUS ============
+function updateConnectionStatus(isConnected = null) {
+    const statusEl = document.getElementById('connectionStatus');
+    const textEl = document.getElementById('connectionText');
+    if (!statusEl) return;
+    if (isConnected === 'testing') {
+        statusEl.className = 'connection-status testing';
+        textEl.textContent = 'Menguji...';
+        return;
+    }
+    statusEl.className = 'connection-status connected';
+    textEl.textContent = 'Terhubung';
+}
+
+// ============ DATA STORAGE ============
+function getData() { return JSON.parse(localStorage.getItem('tpg_data_79') || '{}'); }
+function saveData(data) { localStorage.setItem('tpg_data_79', JSON.stringify(data)); }
+
+function getLembagaData(lembagaId) {
+    const data = getData();
+    if (!data[lembagaId]) data[lembagaId] = { checked: [], files: {} };
+    return data[lembagaId];
+}
+
+function updateLembagaData(lembagaId, updater) {
+    const data = getData();
+    if (!data[lembagaId]) data[lembagaId] = { checked: [], files: {} };
+    updater(data[lembagaId]);
+    saveData(data);
+}
+
+// ============ DRIVE UPLOAD ============
+async function uploadFileToDrive(lembagaId, itemId, file) {
+    const maxSize = MAX_FILE_SIZE * 1024 * 1024;
+    if (file.size > maxSize) { showToast(`File terlalu besar (max ${MAX_FILE_SIZE}MB)`, 'error'); return null; }
+
+    showUploadProgress(true, `Mengupload ${file.name}...`);
+    try {
+        const base64 = await fileToBase64(file);
+        const lmb = lembagaList.find(l => l.id === lembagaId);
+        const item = dataItems.find(i => i.no === itemId);
+
+        updateUploadProgress(30, 'Mengirim ke server...');
+        const response = await fetch(API_URL, {
+            method: 'POST', mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: 'upload', fileName: file.name, mimeType: file.type, base64Data: base64,
+                lembagaId, lembagaKode: lmb.kode, lembagaNama: lmb.nama,
+                itemId, itemName: item.jenis
+            })
+        });
+
+        updateUploadProgress(80, 'Menyimpan metadata...');
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            updateUploadProgress(100, 'Selesai!');
+            setTimeout(() => showUploadProgress(false), 1000);
+            return {
+                driveFileId: result.fileId, driveUrl: result.fileUrl,
+                name: file.name, size: file.size, type: file.type,
+                date: new Date().toISOString()
+            };
+        } else {
+            throw new Error(result.message || 'Upload gagal');
+        }
+    } catch (err) {
+        showUploadProgress(false);
+        showToast('Error upload: ' + err.message, 'error');
+        return null;
+    }
+}
+
+async function deleteFileFromDrive(fileId) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST', mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ action: 'delete', fileId })
+        });
+        const result = await response.json();
+        return result.status === 'success';
+    } catch (err) { return false; }
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function showUploadProgress(show, text = '') {
+    const el = document.getElementById('uploadProgress');
+    if (show) {
+        el.classList.add('show');
+        document.getElementById('uploadInfo').textContent = text;
+        document.getElementById('uploadBarFill').style.width = '0%';
+    } else { el.classList.remove('show'); }
+}
+
+function updateUploadProgress(percent, text) {
+    document.getElementById('uploadBarFill').style.width = percent + '%';
+    if (text) document.getElementById('uploadInfo').textContent = text;
+}
+
+function showLoading(show, msg = '') {
+    const el = document.getElementById('loadingOverlay');
+    if (show) {
+        el.classList.add('active');
+        if (msg) document.getElementById('loadingMsg').textContent = msg;
+    } else { el.classList.remove('active'); }
+}
+
+function openDriveFolder() {
+    window.open(API_URL + '?action=openFolder', '_blank');
+}
+
+// ============ PUBLIC DASHBOARD ============
+function renderPublicDashboard() {
+    const container = document.getElementById('publicDashboard');
+    if (!container) return;
+    
+    const data = getData();
+    const visibleLembaga = lembagaList;
+    const totalLembaga = visibleLembaga.length;
+
+    let totalChecked = 0, totalFiles = 0, completeCount = 0, emptyCount = 0;
+    let sumPercent = 0;
+    const lembagaStats = [];
+    const jenisStats = { SDN: { total: 0, checked: 0, files: 0, complete: 0 }, SDS: { total: 0, checked: 0, files: 0, complete: 0 } };
+
+    visibleLembaga.forEach(lmb => {
+        const lmbData = data[lmb.id] || { checked: [], files: {} };
+        const checked = lmbData.checked.length;
+        const files = Object.values(lmbData.files).reduce((sum, arr) => sum + arr.length, 0);
+        const percent = Math.round((checked / TOTAL_ITEMS) * 100);
+        
+        totalChecked += checked;
+        totalFiles += files;
+        sumPercent += percent;
+        
+        if (checked === TOTAL_ITEMS) completeCount++;
+        if (checked === 0) emptyCount++;
+        
+        lembagaStats.push({ id: lmb.id, kode: lmb.kode, nama: lmb.nama, jenis: lmb.jenis, checked, files, percent });
+        
+        jenisStats[lmb.jenis].total++;
+        jenisStats[lmb.jenis].checked += checked;
+        jenisStats[lmb.jenis].files += files;
+        if (checked === TOTAL_ITEMS) jenisStats[lmb.jenis].complete++;
+    });
+
+    const totalItems = totalLembaga * TOTAL_ITEMS;
+    const overallPercent = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+    const avgPercent = totalLembaga > 0 ? Math.round(sumPercent / totalLembaga) : 0;
+
+    container.innerHTML = `
+        <div class="kpi-grid">
+            <div class="kpi-card blue">
+                <span class="kpi-icon">🏫</span>
+                <div class="kpi-label">Total Lembaga</div>
+                <div class="kpi-value">${totalLembaga}</div>
+                <div class="kpi-sub">📚 ${TOTAL_ITEMS} item per lembaga</div>
+            </div>
+            <div class="kpi-card green">
+                <span class="kpi-icon">✅</span>
+                <div class="kpi-label">Lembaga Lengkap</div>
+                <div class="kpi-value">${completeCount}</div>
+                <div class="kpi-sub">
+                    <span class="kpi-trend neutral">${totalLembaga > 0 ? Math.round((completeCount / totalLembaga) * 100) : 0}%</span> dari total
+                </div>
+            </div>
+            <div class="kpi-card orange">
+                <span class="kpi-icon">📎</span>
+                <div class="kpi-label">Total File Upload</div>
+                <div class="kpi-value">${totalFiles.toLocaleString('id-ID')}</div>
+                <div class="kpi-sub">🗂️ Tersimpan di Google Drive</div>
+            </div>
+            <div class="kpi-card purple">
+                <span class="kpi-icon">📋</span>
+                <div class="kpi-label">Item Tercentang</div>
+                <div class="kpi-value">${totalChecked.toLocaleString('id-ID')}</div>
+                <div class="kpi-sub">dari ${totalItems.toLocaleString('id-ID')} item</div>
+            </div>
+            <div class="kpi-card red">
+                <span class="kpi-icon">⚠️</span>
+                <div class="kpi-label">Belum Mulai</div>
+                <div class="kpi-value">${emptyCount}</div>
+                <div class="kpi-sub">Lembaga tanpa data</div>
+            </div>
+            <div class="kpi-card teal">
+                <span class="kpi-icon">📈</span>
+                <div class="kpi-label">Rata-rata Progress</div>
+                <div class="kpi-value">${avgPercent}%</div>
+                <div class="kpi-sub">Per lembaga</div>
+            </div>
+        </div>
+
+        <div class="progress-ring-wrapper">
+            <div class="progress-ring">
+                <svg viewBox="0 0 140 140">
+                    <defs>
+                        <linearGradient id="ringGradientPublic" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2ec27e"/>
+                            <stop offset="100%" stop-color="#00a9a5"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="ring-bg" cx="70" cy="70" r="58"></circle>
+                    <circle class="ring-fill" id="ringFillPublic" cx="70" cy="70" r="58"
+                            stroke="url(#ringGradientPublic)"
+                            stroke-dasharray="364.4" stroke-dashoffset="${364.4 - (overallPercent / 100) * 364.4}"></circle>
+                </svg>
+                <div class="ring-text">
+                    <div class="ring-percent">${overallPercent}%</div>
+                    <div class="ring-label">Progress</div>
+                </div>
+            </div>
+            <div class="progress-ring-info">
+                <h3>📊 Progress Keseluruhan</h3>
+                <p>Ringkasan kelengkapan data verifikasi TPG dari seluruh lembaga Kecamatan Sampang.</p>
+                <div class="progress-ring-stats">
+                    <div class="progress-ring-stat">
+                        <div class="num">${totalChecked.toLocaleString('id-ID')}</div>
+                        <div class="lbl">Tercentang</div>
+                    </div>
+                    <div class="progress-ring-stat">
+                        <div class="num">${totalFiles.toLocaleString('id-ID')}</div>
+                        <div class="lbl">File</div>
+                    </div>
+                    <div class="progress-ring-stat">
+                        <div class="num">${completeCount}</div>
+                        <div class="lbl">Lengkap</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-grid" id="publicInsightGrid"></div>
+
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>📊 Progress per Jenis Sekolah</h3>
+                <canvas id="publicChartJenis"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🏆 Top 10 Lembaga Terbaik</h3>
+                <canvas id="publicChartTop10"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📉 Distribusi Progress Lembaga</h3>
+                <canvas id="publicChartDistribusi"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📋 5 Item Paling & Kurang Terisi</h3>
+                <canvas id="publicChartItems"></canvas>
+            </div>
+        </div>
+
+        <div class="heatmap-wrapper">
+            <h3>🔥 Heatmap Progress ${totalLembaga} Lembaga</h3>
+            <div class="heatmap" id="publicHeatmap"></div>
+            <div class="heatmap-legend">
+                <span>Rendah</span>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#e0e8f0"></div>0%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffb3b8"></div>1-20%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffcc80"></div>21-40%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffe082"></div>41-60%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#a5e6b8"></div>61-99%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#2ec27e"></div>100%</div>
+                <span>Tinggi</span>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h3>🏫 Ringkasan Progress per Lembaga</h3>
+            <div class="dashboard-filter-bar">
+                <label>Urutkan:</label>
+                <select id="publicSortLembaga">
+                    <option value="no">Nomor Urut</option>
+                    <option value="pct-desc">Progress Tertinggi</option>
+                    <option value="pct-asc">Progress Terendah</option>
+                    <option value="name">Nama Lembaga</option>
+                </select>
+                <select id="publicFilterJenis">
+                    <option value="all">Semua Jenis</option>
+                    <option value="SDN">UPTD SDN</option>
+                    <option value="SDS">SDS (Swasta)</option>
+                </select>
+                <input type="text" id="publicSearchLembaga" placeholder="Cari lembaga..." style="min-width:180px;">
+            </div>
+            <div style="max-height:500px; overflow-y:auto; border:2px solid var(--dapo-border); border-radius:8px;">
+                <table class="lembaga-summary-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode</th>
+                            <th>Nama Lembaga</th>
+                            <th>Checklist</th>
+                            <th>File</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody id="publicLembagaBody"></tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    renderInsights(lembagaStats, jenisStats, totalLembaga, completeCount, emptyCount, totalChecked, totalFiles, avgPercent, 'publicInsightGrid');
+    renderPublicCharts(jenisStats, lembagaStats, data, visibleLembaga);
+    renderHeatmap(lembagaStats, 'publicHeatmap');
+    renderPublicLembagaTable(lembagaStats);
+}
+
+function renderInsights(lembagaStats, jenisStats, total, complete, empty, checked, files, avgPct, targetId = 'insightGrid') {
+    const grid = document.getElementById(targetId);
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    const insights = [];
+    
+    const topLembaga = [...lembagaStats].sort((a, b) => b.percent - a.percent)[0];
+    if (topLembaga && topLembaga.percent > 0) {
+        insights.push({
+            type: 'success', icon: '🏆', title: 'Lembaga Terbaik',
+            text: `<strong>${topLembaga.nama}</strong> dengan progress <strong>${topLembaga.percent}%</strong> (${topLembaga.checked}/${TOTAL_ITEMS} item).`
+        });
+    }
+    
+    if (empty > 0) {
+        insights.push({
+            type: 'danger', icon: '⚠️', title: `${empty} Lembaga Belum Mulai`,
+            text: `Ada <strong>${empty} lembaga</strong> yang belum mengisi data sama sekali.`
+        });
+    } else {
+        insights.push({
+            type: 'success', icon: '✅', title: 'Semua Lembaga Sudah Mulai',
+            text: `Seluruh <strong>${total} lembaga</strong> telah mengisi minimal 1 data.`
+        });
+    }
+    
+    const sdnPct = jenisStats.SDN.total > 0 ? Math.round((jenisStats.SDN.checked / (jenisStats.SDN.total * TOTAL_ITEMS)) * 100) : 0;
+    const sdsPct = jenisStats.SDS.total > 0 ? Math.round((jenisStats.SDS.checked / (jenisStats.SDS.total * TOTAL_ITEMS)) * 100) : 0;
+    if (sdnPct > sdsPct) {
+        insights.push({ type: 'info', icon: '📊', title: 'SDN Lebih Unggul', text: `SDN <strong>${sdnPct}%</strong> vs SDS <strong>${sdsPct}%</strong>. Selisih ${sdnPct - sdsPct}%.` });
+    } else if (sdsPct > sdnPct) {
+        insights.push({ type: 'info', icon: '📊', title: 'SDS Lebih Unggul', text: `SDS <strong>${sdsPct}%</strong> vs SDN <strong>${sdnPct}%</strong>. Selisih ${sdsPct - sdnPct}%.` });
+    }
+    
+    if (files > 0) {
+        insights.push({ type: 'info', icon: '📎', title: 'Total File Terupload',
+            text: `<strong>${files.toLocaleString('id-ID')} file</strong> di Google Drive (rata-rata <strong>${(files / total).toFixed(1)} file</strong>/lembaga).` });
+    }
+    
+    let avgType = 'info', avgText = '';
+    if (avgPct >= 80) { avgType = 'success'; avgText = `Rata-rata <strong>${avgPct}%</strong> — sangat baik!`; }
+    else if (avgPct >= 50) { avgType = 'info'; avgText = `Rata-rata <strong>${avgPct}%</strong> — cukup baik.`; }
+    else if (avgPct >= 25) { avgType = 'warning'; avgText = `Rata-rata <strong>${avgPct}%</strong> — perlu perbaikan.`; }
+    else { avgType = 'danger'; avgText = `Rata-rata <strong>${avgPct}%</strong> — perlu perhatian serius.`; }
+    insights.push({ type: avgType, icon: '📈', title: 'Rata-rata Keseluruhan', text: avgText });
+    
+    const startedLembaga = lembagaStats.filter(l => l.checked > 0);
+    if (startedLembaga.length > 0) {
+        const lowest = [...startedLembaga].sort((a, b) => a.percent - b.percent)[0];
+        insights.push({ type: 'warning', icon: '📉', title: 'Perlu Perhatian',
+            text: `<strong>${lowest.nama}</strong> baru mencapai <strong>${lowest.percent}%</strong> (${lowest.checked}/${TOTAL_ITEMS}).` });
+    }
+    
+    insights.slice(0, 6).forEach(ins => {
+        const card = document.createElement('div');
+        card.className = 'insight-card ' + ins.type;
+        card.innerHTML = `
+            <div class="insight-icon">${ins.icon}</div>
+            <div class="insight-body">
+                <div class="insight-title">${ins.title}</div>
+                <div class="insight-text">${ins.text}</div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderPublicCharts(jenisStats, lembagaStats, data, visibleLembaga) {
+    const ctx1 = document.getElementById('publicChartJenis');
+    if (ctx1) {
+        if (charts.publicJenis) charts.publicJenis.destroy();
+        const sdnPct = jenisStats.SDN.total > 0 ? Math.round((jenisStats.SDN.checked / (jenisStats.SDN.total * TOTAL_ITEMS)) * 100) : 0;
+        const sdsPct = jenisStats.SDS.total > 0 ? Math.round((jenisStats.SDS.checked / (jenisStats.SDS.total * TOTAL_ITEMS)) * 100) : 0;
+        charts.publicJenis = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: [`UPTD SDN (${jenisStats.SDN.total})`, `SDS (${jenisStats.SDS.total})`],
+                datasets: [{
+                    data: [sdnPct, sdsPct],
+                    backgroundColor: ['#1a5fb4', '#f5c211'],
+                    borderWidth: 3, borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+                    tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: ${ctx.parsed}%` } }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+
+    const ctx2 = document.getElementById('publicChartTop10');
+    if (ctx2) {
+        if (charts.publicTop10) charts.publicTop10.destroy();
+        const sorted = [...lembagaStats].sort((a, b) => b.percent - a.percent).slice(0, 10);
+        charts.publicTop10 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(l => l.nama.length > 22 ? l.nama.substring(0, 22) + '...' : l.nama),
+                datasets: [{
+                    label: 'Progress (%)',
+                    data: sorted.map(l => l.percent),
+                    backgroundColor: sorted.map(l => l.percent === 100 ? '#2ec27e' : l.percent >= 70 ? '#00a9a5' : l.percent >= 40 ? '#f5c211' : '#e01b24'),
+                    borderRadius: 6, barThickness: 14
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => {
+                        const item = sorted[ctx.dataIndex];
+                        return ` ${item.percent}% (${item.checked}/${TOTAL_ITEMS})`;
+                    } } }
+                },
+                scales: {
+                    x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', font: { size: 10 } } },
+                    y: { ticks: { font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    const ctx3 = document.getElementById('publicChartDistribusi');
+    if (ctx3) {
+        if (charts.publicDistribusi) charts.publicDistribusi.destroy();
+        const buckets = { '0%': 0, '1-25%': 0, '26-50%': 0, '51-75%': 0, '76-99%': 0, '100%': 0 };
+        lembagaStats.forEach(l => {
+            if (l.percent === 0) buckets['0%']++;
+            else if (l.percent <= 25) buckets['1-25%']++;
+            else if (l.percent <= 50) buckets['26-50%']++;
+            else if (l.percent <= 75) buckets['51-75%']++;
+            else if (l.percent < 100) buckets['76-99%']++;
+            else buckets['100%']++;
+        });
+        charts.publicDistribusi = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(buckets),
+                datasets: [{
+                    label: 'Jumlah Lembaga',
+                    data: Object.values(buckets),
+                    backgroundColor: ['#e01b24', '#ff7800', '#f5c211', '#ffe082', '#00a9a5', '#2ec27e'],
+                    borderRadius: 8, barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.y} lembaga` } }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 5, font: { size: 10 } } },
+                    x: { ticks: { font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    const ctx4 = document.getElementById('publicChartItems');
+    if (ctx4) {
+        if (charts.publicItems) charts.publicItems.destroy();
+        const itemCounts = dataItems.map(item => {
+            let count = 0;
+            visibleLembaga.forEach(lmb => {
+                const lmbData = data[lmb.id] || { checked: [], files: {} };
+                if (lmbData.checked.includes(item.no)) count++;
+            });
+            return { no: item.no, jenis: item.jenis, count, pct: Math.round((count / visibleLembaga.length) * 100) };
+        });
+        const sorted = [...itemCounts].sort((a, b) => b.pct - a.pct);
+        charts.publicItems = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(i => `#${i.no} ${i.jenis}`),
+                datasets: [{
+                    label: 'Terisi (%)',
+                    data: sorted.map(i => i.pct),
+                    backgroundColor: sorted.map(i => i.pct >= 50 ? '#2ec27e' : i.pct >= 25 ? '#f5c211' : '#e01b24'),
+                    borderRadius: 6, barThickness: 20
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: (ctx) => {
+                        const item = sorted[ctx.dataIndex];
+                        return ` ${item.pct}% (${item.count}/${visibleLembaga.length})`;
+                    } } }
+                },
+                scales: {
+                    x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', font: { size: 10 } } },
+                    y: { ticks: { font: { size: 11 } } }
+                }
+            }
+        });
+    }
+}
+
+function renderHeatmap(lembagaStats, targetId = 'heatmap') {
+    const heatmap = document.getElementById(targetId);
+    if (!heatmap) return;
+    heatmap.innerHTML = '';
+    const sorted = [...lembagaStats].sort((a, b) => a.kode.localeCompare(b.kode));
+    sorted.forEach(lmb => {
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        let level = 0;
+        if (lmb.percent === 0) level = 0;
+        else if (lmb.percent <= 20) level = 1;
+        else if (lmb.percent <= 40) level = 2;
+        else if (lmb.percent <= 60) level = 3;
+        else if (lmb.percent < 100) level = 4;
+        else level = 5;
+        cell.setAttribute('data-level', level);
+        cell.title = `${lmb.nama}\n📊 ${lmb.percent}% (${lmb.checked}/${TOTAL_ITEMS})\n📎 ${lmb.files} file`;
+        heatmap.appendChild(cell);
+    });
+}
+
+function renderPublicLembagaTable(lembagaStats) {
+    const tbody = document.getElementById('publicLembagaBody');
+    if (!tbody) return;
+    
+    const sortBy = document.getElementById('publicSortLembaga')?.value || 'no';
+    const filterJenis = document.getElementById('publicFilterJenis')?.value || 'all';
+    const searchLmb = (document.getElementById('publicSearchLembaga')?.value || '').toLowerCase();
+    
+    let list = [...lembagaStats];
+    if (filterJenis !== 'all') list = list.filter(l => l.jenis === filterJenis);
+    if (searchLmb) list = list.filter(l => l.nama.toLowerCase().includes(searchLmb) || l.kode.toLowerCase().includes(searchLmb));
+    
+    if (sortBy === 'pct-desc') list.sort((a, b) => b.percent - a.percent);
+    else if (sortBy === 'pct-asc') list.sort((a, b) => a.percent - b.percent);
+    else if (sortBy === 'name') list.sort((a, b) => a.nama.localeCompare(b.nama));
+    
+    const rankMap = {};
+    if (sortBy === 'pct-desc') {
+        [...list].sort((a, b) => b.percent - a.percent).forEach((l, i) => rankMap[l.id] = i + 1);
+    }
+    
+    tbody.innerHTML = '';
+    list.forEach((lmb, idx) => {
+        let statusClass = 'status-empty';
+        if (lmb.checked === TOTAL_ITEMS) statusClass = 'status-done';
+        else if (lmb.checked > 0) statusClass = 'status-progress';
+        
+        let rankBadge = '';
+        if (sortBy === 'pct-desc' && rankMap[lmb.id] <= 3) {
+            rankBadge = `<span class="rank-badge top${rankMap[lmb.id]}">${rankMap[lmb.id]}</span>`;
+        } else if (sortBy === 'pct-desc') {
+            rankBadge = `<span class="rank-badge">${rankMap[lmb.id]}</span>`;
+        } else {
+            rankBadge = `<span class="rank-badge">${idx + 1}</span>`;
+        }
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${rankBadge}</td>
+            <td><strong>${lmb.kode}</strong></td>
+            <td>${lmb.nama} <span class="type-badge ${lmb.jenis.toLowerCase()}">${lmb.jenis}</span></td>
+            <td>${lmb.checked}/${TOTAL_ITEMS}</td>
+            <td>📎 ${lmb.files}</td>
+            <td>
+                <span class="progress-mini-bar"><span class="progress-mini-fill" style="width:${lmb.percent}%"></span></span>
+                <span class="${statusClass}">${lmb.percent}%</span>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#888;font-style:italic;">Tidak ada lembaga yang cocok.</td></tr>';
+    }
+    
+    const sortEl = document.getElementById('publicSortLembaga');
+    if (sortEl && !sortEl.dataset.bound) {
+        sortEl.dataset.bound = '1';
+        sortEl.addEventListener('change', () => renderPublicDashboard());
+    }
+    const filterEl = document.getElementById('publicFilterJenis');
+    if (filterEl && !filterEl.dataset.bound) {
+        filterEl.dataset.bound = '1';
+        filterEl.addEventListener('change', () => renderPublicDashboard());
+    }
+    const searchEl = document.getElementById('publicSearchLembaga');
+    if (searchEl && !searchEl.dataset.bound) {
+        searchEl.dataset.bound = '1';
+        searchEl.addEventListener('input', () => renderPublicDashboard());
+    }
+}
+
+// ============ PRIVATE DASHBOARD ============
+function renderPrivateDashboard() {
+    const container = document.getElementById('privateDashboard');
+    if (!container) return;
+    
+    const data = getData();
+    const visibleLembaga = (session && session.role === 'lembaga') 
+        ? lembagaList.filter(l => l.id === session.lembagaId) 
+        : lembagaList;
+    const totalLembaga = visibleLembaga.length;
+
+    let totalChecked = 0, totalFiles = 0, completeCount = 0, emptyCount = 0;
+    let sumPercent = 0;
+    const lembagaStats = [];
+    const jenisStats = { SDN: { total: 0, checked: 0, files: 0, complete: 0 }, SDS: { total: 0, checked: 0, files: 0, complete: 0 } };
+
+    visibleLembaga.forEach(lmb => {
+        const lmbData = data[lmb.id] || { checked: [], files: {} };
+        const checked = lmbData.checked.length;
+        const files = Object.values(lmbData.files).reduce((sum, arr) => sum + arr.length, 0);
+        const percent = Math.round((checked / TOTAL_ITEMS) * 100);
+        totalChecked += checked;
+        totalFiles += files;
+        sumPercent += percent;
+        if (checked === TOTAL_ITEMS) completeCount++;
+        if (checked === 0) emptyCount++;
+        lembagaStats.push({ id: lmb.id, kode: lmb.kode, nama: lmb.nama, jenis: lmb.jenis, checked, files, percent });
+        jenisStats[lmb.jenis].total++;
+        jenisStats[lmb.jenis].checked += checked;
+        jenisStats[lmb.jenis].files += files;
+        if (checked === TOTAL_ITEMS) jenisStats[lmb.jenis].complete++;
+    });
+
+    const totalItems = totalLembaga * TOTAL_ITEMS;
+    const overallPercent = totalItems > 0 ? Math.round((totalChecked / totalItems) * 100) : 0;
+    const avgPercent = totalLembaga > 0 ? Math.round(sumPercent / totalLembaga) : 0;
+
+    container.innerHTML = `
+        <div class="kpi-grid">
+            <div class="kpi-card blue">
+                <span class="kpi-icon">🏫</span>
+                <div class="kpi-label">Total Lembaga</div>
+                <div class="kpi-value">${totalLembaga}</div>
+            </div>
+            <div class="kpi-card green">
+                <span class="kpi-icon">✅</span>
+                <div class="kpi-label">Lembaga Lengkap</div>
+                <div class="kpi-value">${completeCount}</div>
+            </div>
+            <div class="kpi-card orange">
+                <span class="kpi-icon">📎</span>
+                <div class="kpi-label">Total File</div>
+                <div class="kpi-value">${totalFiles.toLocaleString('id-ID')}</div>
+            </div>
+            <div class="kpi-card purple">
+                <span class="kpi-icon">📋</span>
+                <div class="kpi-label">Item Tercentang</div>
+                <div class="kpi-value">${totalChecked.toLocaleString('id-ID')}</div>
+            </div>
+            <div class="kpi-card red">
+                <span class="kpi-icon">⚠️</span>
+                <div class="kpi-label">Belum Mulai</div>
+                <div class="kpi-value">${emptyCount}</div>
+            </div>
+            <div class="kpi-card teal">
+                <span class="kpi-icon">📈</span>
+                <div class="kpi-label">Rata-rata</div>
+                <div class="kpi-value">${avgPercent}%</div>
+            </div>
+        </div>
+
+        <div class="progress-ring-wrapper">
+            <div class="progress-ring">
+                <svg viewBox="0 0 140 140">
+                    <defs>
+                        <linearGradient id="ringGradientPrivate" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2ec27e"/>
+                            <stop offset="100%" stop-color="#00a9a5"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="ring-bg" cx="70" cy="70" r="58"></circle>
+                    <circle class="ring-fill" cx="70" cy="70" r="58"
+                            stroke="url(#ringGradientPrivate)"
+                            stroke-dasharray="364.4" stroke-dashoffset="${364.4 - (overallPercent / 100) * 364.4}"></circle>
+                </svg>
+                <div class="ring-text">
+                    <div class="ring-percent">${overallPercent}%</div>
+                    <div class="ring-label">Progress</div>
+                </div>
+            </div>
+            <div class="progress-ring-info">
+                <h3>📊 Progress Keseluruhan</h3>
+                <p>Ringkasan kelengkapan data verifikasi TPG.</p>
+                <div class="progress-ring-stats">
+                    <div class="progress-ring-stat">
+                        <div class="num">${totalChecked.toLocaleString('id-ID')}</div>
+                        <div class="lbl">Tercentang</div>
+                    </div>
+                    <div class="progress-ring-stat">
+                        <div class="num">${totalFiles.toLocaleString('id-ID')}</div>
+                        <div class="lbl">File</div>
+                    </div>
+                    <div class="progress-ring-stat">
+                        <div class="num">${completeCount}</div>
+                        <div class="lbl">Lengkap</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-grid" id="privateInsightGrid"></div>
+
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>📊 Progress per Jenis Sekolah</h3>
+                <canvas id="privateChartJenis"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>🏆 Top 10 Lembaga Terbaik</h3>
+                <canvas id="privateChartTop10"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📉 Distribusi Progress Lembaga</h3>
+                <canvas id="privateChartDistribusi"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>📋 5 Item Paling & Kurang Terisi</h3>
+                <canvas id="privateChartItems"></canvas>
+            </div>
+        </div>
+
+        <div class="heatmap-wrapper">
+            <h3>🔥 Heatmap Progress Lembaga</h3>
+            <div class="heatmap" id="privateHeatmap"></div>
+            <div class="heatmap-legend">
+                <span>Rendah</span>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#e0e8f0"></div>0%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffb3b8"></div>1-20%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffcc80"></div>21-40%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#ffe082"></div>41-60%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#a5e6b8"></div>61-99%</div>
+                <div class="heatmap-legend-item"><div class="heatmap-legend-box" style="background:#2ec27e"></div>100%</div>
+                <span>Tinggi</span>
+            </div>
+        </div>
+    `;
+    
+    renderInsights(lembagaStats, jenisStats, totalLembaga, completeCount, emptyCount, totalChecked, totalFiles, avgPercent, 'privateInsightGrid');
+    renderPrivateCharts(jenisStats, lembagaStats, data, visibleLembaga);
+    renderHeatmap(lembagaStats, 'privateHeatmap');
+}
+
+function renderPrivateCharts(jenisStats, lembagaStats, data, visibleLembaga) {
+    const ctx1 = document.getElementById('privateChartJenis');
+    if (ctx1) {
+        if (charts.privateJenis) charts.privateJenis.destroy();
+        const sdnPct = jenisStats.SDN.total > 0 ? Math.round((jenisStats.SDN.checked / (jenisStats.SDN.total * TOTAL_ITEMS)) * 100) : 0;
+        const sdsPct = jenisStats.SDS.total > 0 ? Math.round((jenisStats.SDS.checked / (jenisStats.SDS.total * TOTAL_ITEMS)) * 100) : 0;
+        charts.privateJenis = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: [`UPTD SDN (${jenisStats.SDN.total})`, `SDS (${jenisStats.SDS.total})`],
+                datasets: [{ data: [sdnPct, sdsPct], backgroundColor: ['#1a5fb4', '#f5c211'], borderWidth: 3, borderColor: '#fff' }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } }, cutout: '65%' }
+        });
+    }
+
+    const ctx2 = document.getElementById('privateChartTop10');
+    if (ctx2) {
+        if (charts.privateTop10) charts.privateTop10.destroy();
+        const sorted = [...lembagaStats].sort((a, b) => b.percent - a.percent).slice(0, 10);
+        charts.privateTop10 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(l => l.nama.length > 22 ? l.nama.substring(0, 22) + '...' : l.nama),
+                datasets: [{
+                    label: 'Progress (%)', data: sorted.map(l => l.percent),
+                    backgroundColor: sorted.map(l => l.percent === 100 ? '#2ec27e' : l.percent >= 70 ? '#00a9a5' : l.percent >= 40 ? '#f5c211' : '#e01b24'),
+                    borderRadius: 6, barThickness: 14
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+            }
+        });
+    }
+
+    const ctx3 = document.getElementById('privateChartDistribusi');
+    if (ctx3) {
+        if (charts.privateDistribusi) charts.privateDistribusi.destroy();
+        const buckets = { '0%': 0, '1-25%': 0, '26-50%': 0, '51-75%': 0, '76-99%': 0, '100%': 0 };
+        lembagaStats.forEach(l => {
+            if (l.percent === 0) buckets['0%']++;
+            else if (l.percent <= 25) buckets['1-25%']++;
+            else if (l.percent <= 50) buckets['26-50%']++;
+            else if (l.percent <= 75) buckets['51-75%']++;
+            else if (l.percent < 100) buckets['76-99%']++;
+            else buckets['100%']++;
+        });
+        charts.privateDistribusi = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(buckets),
+                datasets: [{
+                    label: 'Jumlah', data: Object.values(buckets),
+                    backgroundColor: ['#e01b24', '#ff7800', '#f5c211', '#ffe082', '#00a9a5', '#2ec27e'],
+                    borderRadius: 8, barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 5 } } }
+            }
+        });
+    }
+
+    const ctx4 = document.getElementById('privateChartItems');
+    if (ctx4) {
+        if (charts.privateItems) charts.privateItems.destroy();
+        const itemCounts = dataItems.map(item => {
+            let count = 0;
+            visibleLembaga.forEach(lmb => {
+                const lmbData = data[lmb.id] || { checked: [], files: {} };
+                if (lmbData.checked.includes(item.no)) count++;
+            });
+            return { no: item.no, jenis: item.jenis, count, pct: Math.round((count / visibleLembaga.length) * 100) };
+        });
+        const sorted = [...itemCounts].sort((a, b) => b.pct - a.pct);
+        charts.privateItems = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(i => `#${i.no} ${i.jenis}`),
+                datasets: [{
+                    label: 'Terisi (%)', data: sorted.map(i => i.pct),
+                    backgroundColor: sorted.map(i => i.pct >= 50 ? '#2ec27e' : i.pct >= 25 ? '#f5c211' : '#e01b24'),
+                    borderRadius: 6, barThickness: 20
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+            }
+        });
+    }
+}
+
+// ============ SIDEBAR ============
+function renderLembagaList() {
+    const list = document.getElementById('lembagaList');
+    if (!list) return;
+    const search = document.getElementById('searchLembaga').value.toLowerCase();
+    const data = getData();
+    list.innerHTML = '';
+    let completeCount = 0;
+
+    let visibleLembaga = lembagaList;
+    if (session && session.role === 'lembaga') {
+        visibleLembaga = lembagaList.filter(l => l.id === session.lembagaId);
+    }
+
+    visibleLembaga.forEach(lmb => {
+        if (currentFilter !== 'all' && lmb.jenis !== currentFilter) return;
+        if (search && !lmb.nama.toLowerCase().includes(search) && 
+            !lmb.kode.toLowerCase().includes(search) &&
+            !lmb.kecamatan.toLowerCase().includes(search)) return;
+
+        const lmbData = data[lmb.id] || { checked: [], files: {} };
+        const checkedCount = lmbData.checked.length;
+        const percent = Math.round((checkedCount / TOTAL_ITEMS) * 100);
+        const fileCount = Object.values(lmbData.files).reduce((sum, arr) => sum + arr.length, 0);
+        if (checkedCount === TOTAL_ITEMS) completeCount++;
+
+        const item = document.createElement('div');
+        item.className = 'lembaga-item' + (currentLembagaId === lmb.id ? ' active' : '');
+        item.onclick = () => selectLembaga(lmb.id);
+        item.innerHTML = `
+            <div class="nama">
+                <span>${lmb.nama}</span>
+                <span class="type-badge ${lmb.jenis.toLowerCase()}">${lmb.jenis}</span>
+            </div>
+            <div class="meta">
+                <span>📍 ${lmb.kecamatan}</span>
+                <span>${checkedCount}/${TOTAL_ITEMS} • 📎 ${fileCount}</span>
+            </div>
+            <div class="progress-mini">
+                <div class="progress-mini-fill" style="width: ${percent}%"></div>
+            </div>
+        `;
+        list.appendChild(item);
+    });
+
+    const completeEl = document.getElementById('completeLembaga');
+    if (completeEl) completeEl.textContent = completeCount;
+}
+
+// ============ LEMBAGA DETAIL ============
+function selectLembaga(lembagaId) {
+    if (session && session.role === 'lembaga' && lembagaId !== session.lembagaId) {
+        showToast('⛔ Anda hanya dapat mengakses data sekolah sendiri', 'error');
+        return;
+    }
+    currentLembagaId = lembagaId;
+    const lmb = lembagaList.find(l => l.id === lembagaId);
+
+    document.getElementById('welcomeScreen').style.display = 'none';
+    document.getElementById('lembagaDetail').classList.add('active');
+    document.getElementById('detailNama').textContent = lmb.nama;
+    document.getElementById('detailSub').textContent = 
+        `Kode: ${lmb.kode} • Kecamatan: ${lmb.kecamatan} • Jenis: ${lmb.jenis === 'SDN' ? 'UPTD SDN (Negeri)' : 'SDS (Swasta)'}`;
+
+    renderChecklist();
+    renderLembagaList();
+}
+
+function renderChecklist() {
+    const tbody = document.getElementById('checklistBody');
+    if (!tbody) return;
+    const lmbData = getLembagaData(currentLembagaId);
+    tbody.innerHTML = '';
+
+    dataItems.forEach(item => {
+        const isChecked = lmbData.checked.includes(item.no);
+        const files = lmbData.files[item.no] || [];
+        const fileCount = files.length;
+
+        const tr = document.createElement('tr');
+        tr.className = isChecked ? 'checked' : '';
+        tr.innerHTML = `
+            <td>
+                <label class="custom-checkbox">
+                    <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCheck(${item.no})">
+                    <span class="checkmark"></span>
+                </label>
+            </td>
+            <td>${item.no}</td>
+            <td>
+                <strong>${item.jenis}</strong>
+                <div class="keterangan-text">${item.keterangan}</div>
+            </td>
+            <td><span class="status-badge ${isChecked ? 'terpenuhi' : 'belum'}">${isChecked ? '✅' : '❌'}</span></td>
+            <td>
+                <div class="upload-area">
+                    <div class="btn-row">
+                        <button class="upload-btn" id="uploadBtn_${item.no}" 
+                                onclick="triggerUpload(${item.no})" 
+                                ${!isChecked ? 'disabled' : ''}>
+                            📤 Upload
+                        </button>
+                        <button class="upload-btn view ${fileCount === 0 ? 'view-disabled' : ''}" 
+                                onclick="openFileViewer(${item.no})"
+                                ${fileCount === 0 ? 'disabled' : ''}>
+                            👁️ Lihat (${fileCount})
+                        </button>
+                    </div>
+                    <input type="file" id="fileInput_${item.no}" multiple style="display:none" 
+                           onchange="handleFileUpload(${item.no}, event)">
+                    <div class="file-list">
+                        ${files.length === 0 ? '<span class="empty-files">Belum ada file</span>' : 
+                          files.map(f => `
+                            <div class="file-item">
+                                <span>📎</span>
+                                <span class="file-name" title="${f.name}">${f.name}</span>
+                                <span class="file-size">${formatSize(f.size)}</span>
+                                ${f.driveUrl ? `<a href="${f.driveUrl}" target="_blank" class="drive-link">🔗</a>` : ''}
+                                <button class="file-action delete" onclick="removeFile(${item.no}, '${f.driveFileId || ''}', '${f.name.replace(/'/g, "\\'")}')">🗑️</button>
+                            </div>
+                          `).join('')}
+                    </div>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    updateLembagaStats();
+}
+
+function updateLembagaStats() {
+    const lmbData = getLembagaData(currentLembagaId);
+    const checkedCount = lmbData.checked.length;
+    const fileCount = Object.values(lmbData.files).reduce((sum, arr) => sum + arr.length, 0);
+    const percent = Math.round((checkedCount / TOTAL_ITEMS) * 100);
+
+    const el = document.getElementById('statChecked');
+    if (el) {
+        el.textContent = `${checkedCount}/${TOTAL_ITEMS}`;
+        document.getElementById('statFiles').textContent = fileCount;
+        document.getElementById('statPercent').textContent = percent + '%';
+        document.getElementById('progressText').textContent = `${checkedCount}/${TOTAL_ITEMS}`;
+    }
+}
+
+// ============ FILE VIEWER ============
+function openFileViewer(itemNo) {
+    const item = dataItems.find(i => i.no === itemNo);
+    if (!item) return;
+    const lmbData = getLembagaData(currentLembagaId);
+    const files = lmbData.files[itemNo] || [];
+
+    document.getElementById('fileViewerTitle').textContent = `📁 File Item ${itemNo}: ${item.jenis}`;
+    const body = document.getElementById('fileViewerBody');
+    if (files.length === 0) {
+        body.innerHTML = '<p style="color:#888;font-style:italic;">Belum ada file.</p>';
+    } else {
+        body.innerHTML = `
+            <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+                <thead>
+                    <tr style="background:#e3eefb;">
+                        <th style="padding:8px;text-align:left;color:#1a5fb4;font-weight:800;">Nama File</th>
+                        <th style="padding:8px;text-align:left;color:#1a5fb4;font-weight:800;">Ukuran</th>
+                        <th style="padding:8px;text-align:center;color:#1a5fb4;font-weight:800;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${files.map(f => `
+                        <tr>
+                            <td style="padding:8px;border-bottom:1px solid #e8eef5;">📎 ${f.name}</td>
+                            <td style="padding:8px;border-bottom:1px solid #e8eef5;">${formatSize(f.size)}</td>
+                            <td style="padding:8px;border-bottom:1px solid #e8eef5;text-align:center;">
+                                ${f.driveUrl ? `<a href="${f.driveUrl}" target="_blank" class="btn btn-primary" style="padding:4px 10px;font-size:0.72rem;text-decoration:none;">🔗 Buka</a>` : '-'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    document.getElementById('fileViewerModal').classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// ============ ACTIONS ============
+async function toggleCheck(no) {
+    const lmbData = getLembagaData(currentLembagaId);
+    const wasChecked = lmbData.checked.includes(no);
+    const lmb = lembagaList.find(l => l.id === currentLembagaId);
+
+    updateLembagaData(currentLembagaId, (data) => {
+        const idx = data.checked.indexOf(no);
+        if (idx > -1) data.checked.splice(idx, 1);
+        else data.checked.push(no);
+    });
+    renderChecklist();
+    renderLembagaList();
+    renderPrivateDashboard();
+
+    try {
+        updateSyncStatus('syncing', 'Menyimpan...');
+        await fetch(API_URL, {
+            method: 'POST', mode: 'cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({
+                action: wasChecked ? 'uncheck' : 'check',
+                lembagaId: currentLembagaId,
+                lembagaKode: lmb.kode,
+                itemNo: no
+            })
+        });
+        updateSyncStatus('synced', 'Tersinkron');
+        showToast('✅ Tersimpan di server', 'success');
+    } catch (err) {
+        updateSyncStatus('error', 'Gagal sync');
+        showToast('⚠️ Tersimpan lokal', 'error');
+    }
+}
+
+function triggerUpload(no) {
+    document.getElementById(`fileInput_${no}`).click();
+}
+
+async function handleFileUpload(no, event) {
+    const files = event.target.files;
+    if (!files.length) return;
+
+    const lmbData = getLembagaData(currentLembagaId);
+    if (!lmbData.files[no]) lmbData.files[no] = [];
+
+    const btn = document.getElementById(`uploadBtn_${no}`);
+    btn.classList.add('uploading');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Uploading...';
+
+    let successCount = 0;
+    for (const file of files) {
+        const result = await uploadFileToDrive(currentLembagaId, no, file);
+        if (result) { lmbData.files[no].push(result); successCount++; }
+    }
+
+    const allData = getData();
+    allData[currentLembagaId].files = lmbData.files;
+    
+    if (successCount > 0 && !lmbData.checked.includes(no)) {
+        if (!allData[currentLembagaId].checked) allData[currentLembagaId].checked = [];
+        if (!allData[currentLembagaId].checked.includes(no)) {
+            allData[currentLembagaId].checked.push(no);
+        }
+    }
+    
+    saveData(allData);
+    btn.classList.remove('uploading');
+    btn.disabled = false;
+    btn.innerHTML = '📤 Upload';
+
+    await syncFromServer(true);
+    renderChecklist();
+    renderLembagaList();
+    renderPrivateDashboard();
+    
+    if (successCount > 0) showToast(`✅ ${successCount} file diupload & otomatis tercentang`, 'success');
+    event.target.value = '';
+}
+
+async function removeFile(itemId, fileId, fileName) {
+    if (!confirm(`Hapus "${fileName}"?`)) return;
+    showToast('Menghapus...', 'info');
+
+    if (fileId) {
+        const deleted = await deleteFileFromDrive(fileId);
+        if (!deleted) { showToast('Gagal menghapus', 'error'); return; }
+    }
+
+    const allData = getData();
+    const files = allData[currentLembagaId].files[itemId] || [];
+    allData[currentLembagaId].files[itemId] = files.filter(f => f.driveFileId !== fileId);
+    saveData(allData);
+
+    await syncFromServer(true);
+    renderChecklist();
+    renderLembagaList();
+    renderPrivateDashboard();
+    showToast('File dihapus', 'success');
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// ============ EXPORT ============
+function exportSummary() {
+    if (session && session.role !== 'admin') { showToast('⛔ Hanya admin', 'error'); return; }
+    const data = getData();
+    let csv = 'No,Kode,Nama Lembaga,Jenis,Kecamatan,Checklist,File,Progress\n';
+    lembagaList.forEach((lmb, idx) => {
+        const lmbData = data[lmb.id] || { checked: [], files: {} };
+        const fileCount = Object.values(lmbData.files).reduce((sum, arr) => sum + arr.length, 0);
+        const percent = Math.round((lmbData.checked.length / TOTAL_ITEMS) * 100);
+        csv += `${idx+1},"${lmb.kode}","${lmb.nama}","${lmb.jenis}","${lmb.kecamatan}",${lmbData.checked.length},${fileCount},${percent}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rekap_77_lembaga_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    showToast('Rekap diexport', 'success');
+}
+
+// ============ TOAST ============
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.className = 'toast ' + type + ' show';
+    setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ============ INIT ============
+function init() {
+    const select = document.getElementById('lembagaSelect');
+    lembagaList.forEach(lmb => {
+        const opt = document.createElement('option');
+        opt.value = lmb.kode;
+        opt.textContent = `${lmb.kode} - ${lmb.nama}`;
+        select.appendChild(opt);
+    });
+
+    document.querySelectorAll('.login-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById(this.dataset.role === 'admin' ? 'formAdmin' : 'formLembaga').classList.add('active');
+            document.getElementById('loginError').classList.remove('show');
+        });
+    });
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            renderLembagaList();
+        });
+    });
+
+    document.getElementById('searchLembaga').addEventListener('input', renderLembagaList);
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        }
+    });
+
+    checkSession();
+}
+
+init();
+</script>
+</body>
+</html>
